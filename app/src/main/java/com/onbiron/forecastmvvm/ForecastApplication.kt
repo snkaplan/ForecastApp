@@ -2,6 +2,8 @@ package com.onbiron.forecastmvvm
 
 import android.app.Application
 import android.content.Context
+import android.content.pm.ApplicationInfo
+import android.content.pm.PackageManager
 import com.google.android.gms.location.LocationServices
 import com.jakewharton.threetenabp.AndroidThreeTen
 import com.onbiron.forecastmvvm.data.WeatherApiService
@@ -32,7 +34,7 @@ class ForecastApplication: Application(), KodeinAware {
         bind() from singleton { instance<ForecastDatabase>().currentWeatherDao() }
         bind() from singleton { instance<ForecastDatabase>().weatherLocationDao() }
         bind<ConnectivityInterceptor>() with singleton { ConnectivityInterceptorImpl(instance()) }
-        bind() from singleton { WeatherApiService(instance()) }
+        bind() from singleton { WeatherApiService(instance(), getApiKey()) }
         bind<WeatherNetworkDataSource>() with singleton { WeatherNetworkDataSourceImpl(instance()) }
         bind() from provider { LocationServices.getFusedLocationProviderClient(instance<Context>()) }
         bind<LocationProvider>() with singleton { LocationProviderImpl(instance(), instance()) }
@@ -45,5 +47,12 @@ class ForecastApplication: Application(), KodeinAware {
     override fun onCreate() {
         super.onCreate()
         AndroidThreeTen.init(this)
+    }
+
+    private fun getApiKey(): String {
+        val ai: ApplicationInfo = applicationContext.packageManager
+            .getApplicationInfo(applicationContext.packageName, PackageManager.GET_META_DATA)
+        val value = ai.metaData["apiKey"]
+        return value.toString()
     }
 }

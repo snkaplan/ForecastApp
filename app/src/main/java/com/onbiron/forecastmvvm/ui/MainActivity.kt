@@ -1,6 +1,7 @@
 package com.onbiron.forecastmvvm.ui
 
 import android.Manifest
+import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle

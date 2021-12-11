@@ -33,9 +33,6 @@ class MainActivity : AppCompatActivity(), KodeinAware {
     private lateinit var navController: NavController
 
     private val locationCallback = object : LocationCallback(){
-        override fun onLocationResult(p0: LocationResult) {
-            super.onLocationResult(p0)
-        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

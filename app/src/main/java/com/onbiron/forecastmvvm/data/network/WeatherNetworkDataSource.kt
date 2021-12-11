@@ -1,10 +1,10 @@
 package com.onbiron.forecastmvvm.data.network
 
 import androidx.lifecycle.LiveData
-import com.onbiron.forecastmvvm.data.db.CurrentWeatherDao
-import com.onbiron.forecastmvvm.data.network.response.CurrentWeatherResponse
+import com.onbiron.forecastmvvm.data.network.response.WeatherResponse
+import com.onbiron.forecastmvvm.data.provider.CustomLocation
 
 interface WeatherNetworkDataSource {
-    val downloadedCurrentWeather: LiveData<CurrentWeatherResponse>
-    suspend fun fetchCurrentWeather(location: String, unit: String)
+    val downloadedCurrentWeather: LiveData<WeatherResponse>
+    suspend fun fetchCurrentWeather(location: CustomLocation, unit: String)
 }

@@ -23,7 +23,7 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
     private lateinit var binding: CurrentWeatherFragmentBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+                              savedInstanceState: Bundle?): View {
         binding = CurrentWeatherFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -54,14 +54,14 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
             }
             binding.groupLoading.visibility = View.GONE
             updateDateToToday()
-            updateTemperatures(it.temperature, it.feelslike)
+            updateTemperatures(it.temperature, it.feelsLike)
             updateCondition(it.weatherDescriptions[0])
-            updatePrecipitation(it.precip)
-            updateWind(it.windDir, it.windSpeed)
+            it.precip?.let { it1 -> updatePrecipitation(it1) }
+            updateWind(it.windDir.toString(), it.windSpeed)
             updateVisibility(it.visibility)
 
             Glide.with(this@CurrentWeatherFragment)
-                    .load(it.weatherIcons[0])
+                    .load("http://openweathermap.org/img/wn/${it.weatherIcons[0]}@2x.png")
                     .into(binding.imageViewConditionIcon)
 
         })
@@ -100,7 +100,7 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
         binding.textViewWind.text = "Wind: $windDirection, $windSpeed $unitAbbreviation"
     }
 
-    private fun updateVisibility(visibilityDistance: Double) {
+    private fun updateVisibility(visibilityDistance: Int) {
         val unitAbbreviation = chooseLocalizedUnitAbbreviation("km", "mi.")
         binding.textViewVisibility.text = "Visibility: $visibilityDistance $unitAbbreviation"
     }

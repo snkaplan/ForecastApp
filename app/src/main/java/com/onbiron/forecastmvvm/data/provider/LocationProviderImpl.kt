@@ -18,29 +18,30 @@ const val CUSTOM_LOCATION = "CUSTOM_LOCATION"
 const val DEFAULT_LOCATION = "London"
 
 class LocationProviderImpl(
-            context: Context,
-            private val fusedLocationProviderClient: FusedLocationProviderClient
-        ) : PreferenceProvider(context), LocationProvider {
+    context: Context,
+    private val fusedLocationProviderClient: FusedLocationProviderClient,
+) : PreferenceProvider(context), LocationProvider {
     override suspend fun hasLocationChanged(lastWeatherLocation: WeatherLocation): Boolean {
-        val deviceLocationChanged =  try {
+        val deviceLocationChanged = try {
             hasDeviceLocationChanged(lastWeatherLocation)
-        } catch (e: LocationPermissionNotGrantedException){
+        } catch (e: LocationPermissionNotGrantedException) {
             return false
         }
         return deviceLocationChanged || hasCustomLocationChanged(lastWeatherLocation)
     }
 
-    override suspend fun getPreferredLocationString(): String {
-        if(isUsingDeviceLocation()) {
-            try{
+    override suspend fun getPreferredLocationString(): CustomLocation {
+        if (isUsingDeviceLocation()) {
+            try {
                 val deviceLocation =
-                    getLastDeviceLocation().await() ?: return getCustomLocationName() ?: DEFAULT_LOCATION
-                return "${deviceLocation.latitude}, ${deviceLocation.longitude}"
-            } catch (e: LocationPermissionNotGrantedException){
-                return getCustomLocationName() ?: DEFAULT_LOCATION
+                    getLastDeviceLocation().await()
+                        ?: return CustomLocation(getCustomLocationName() ?: DEFAULT_LOCATION, null, null)
+                return  CustomLocation(null, deviceLocation.latitude,deviceLocation.longitude)
+            } catch (e: LocationPermissionNotGrantedException) {
+                return CustomLocation(getCustomLocationName() ?: DEFAULT_LOCATION, null, null)
             }
         } else {
-            return getCustomLocationName() ?: DEFAULT_LOCATION
+            return CustomLocation(getCustomLocationName() ?: DEFAULT_LOCATION, null, null)
         }
     }
 
@@ -85,4 +86,6 @@ class LocationProviderImpl(
         return ContextCompat.checkSelfPermission(appContext,
             Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
     }
+
+
 }

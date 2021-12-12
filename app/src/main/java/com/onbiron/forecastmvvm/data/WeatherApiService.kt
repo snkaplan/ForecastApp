@@ -2,7 +2,8 @@ package com.onbiron.forecastmvvm.data
 
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.onbiron.forecastmvvm.data.network.ConnectivityInterceptor
-import com.onbiron.forecastmvvm.data.network.response.WeatherResponse
+import com.onbiron.forecastmvvm.data.network.response.current.CurrentWeatherResponse
+import com.onbiron.forecastmvvm.data.network.response.future.FutureWeatherResponse
 import kotlinx.coroutines.Deferred
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -18,14 +19,27 @@ interface WeatherApiService {
     fun getCurrentWeatherByNameAsync(
         @Query("q") location: String,
         @Query("units") unit: String,
-    ): Deferred<WeatherResponse>
+    ): Deferred<CurrentWeatherResponse>
 
     @GET("weather")
     fun getCurrentWeatherByLatLonAsync(
         @Query("lat") lat: Double,
         @Query("lon") lon: Double,
         @Query("units") unit: String,
-    ): Deferred<WeatherResponse>
+    ): Deferred<CurrentWeatherResponse>
+
+    @GET("onecall")
+    fun getFutureWeatherByNameAsync(
+        @Query("q") location: String,
+        @Query("units") unit: String,
+    ): Deferred<FutureWeatherResponse>
+
+    @GET("onecall")
+    fun getFutureWeatherByLatLonAsync(
+        @Query("lat") lat: Double,
+        @Query("lon") lon: Double,
+        @Query("units") unit: String,
+    ): Deferred<FutureWeatherResponse>
 
     companion object {
         // invoke is a special method. We can call this by WeatherApiService()

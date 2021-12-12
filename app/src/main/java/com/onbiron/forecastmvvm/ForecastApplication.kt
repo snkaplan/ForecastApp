@@ -19,6 +19,7 @@ import com.onbiron.forecastmvvm.data.provider.UnitProviderImpl
 import com.onbiron.forecastmvvm.data.repository.ForecastRepository
 import com.onbiron.forecastmvvm.data.repository.ForecastRepositoryImpl
 import com.onbiron.forecastmvvm.ui.weather.current.CurrentWeatherViewModelFactory
+import com.onbiron.forecastmvvm.ui.weather.future.list.FutureListWeatherViewModelFactory
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.androidXModule
@@ -32,6 +33,7 @@ class ForecastApplication : Application(), KodeinAware {
         import(androidXModule(this@ForecastApplication)) // produces us a context
         bind() from singleton { ForecastDatabase(instance()) }
         bind() from singleton { instance<ForecastDatabase>().currentWeatherDao() }
+        bind() from singleton { instance<ForecastDatabase>().futureWeatherDao() }
         bind() from singleton { instance<ForecastDatabase>().weatherLocationDao() }
         bind<ConnectivityInterceptor>() with singleton { ConnectivityInterceptorImpl(instance()) }
         bind() from singleton { WeatherApiService(instance(), getApiKey(), getApiStr()) }
@@ -43,9 +45,11 @@ class ForecastApplication : Application(), KodeinAware {
             ForecastRepositoryImpl(instance(),
                 instance(),
                 instance(),
+                instance(),
                 instance())
         }
         bind() from provider { CurrentWeatherViewModelFactory(instance(), instance()) }
+        bind() from provider { FutureListWeatherViewModelFactory(instance(), instance()) }
 
     }
 

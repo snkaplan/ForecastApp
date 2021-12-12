@@ -3,6 +3,9 @@ package com.onbiron.forecastmvvm.data.db.entity
 import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.onbiron.forecastmvvm.data.network.response.future.Current
+import com.onbiron.forecastmvvm.data.network.response.future.Daily
+import com.onbiron.forecastmvvm.data.network.response.future.Hourly
 import java.lang.reflect.Type
 
 
@@ -15,6 +18,43 @@ object Converters {
 
     @TypeConverter
     fun fromArrayList(list: List<String?>?): String {
+        val gson = Gson()
+        return gson.toJson(list)
+    }
+
+    @TypeConverter
+    fun fromStrToCurrentObject(value: String?): Current {
+        val listType: Type = object : TypeToken<String?>() {}.type
+        return Gson().fromJson(value, listType)
+    }
+
+    @TypeConverter
+    fun fromCurrentObject(current: Current): String {
+        val gson = Gson()
+        return gson.toJson(current)
+    }
+
+    @TypeConverter
+    fun fromStringToDaily(value: String?): List<Daily> {
+        val listType: Type = object : TypeToken<List<String?>?>() {}.type
+        return Gson().fromJson(value, listType)
+    }
+
+    @TypeConverter
+    fun fromDailyListToString(list: List<Daily?>?): String {
+        val gson = Gson()
+        return gson.toJson(list)
+    }
+
+
+    @TypeConverter
+    fun fromStringToHourly(value: String?): List<Hourly> {
+        val listType: Type = object : TypeToken<List<String?>?>() {}.type
+        return Gson().fromJson(value, listType)
+    }
+
+    @TypeConverter
+    fun fromHourlyListToString(list: List<Hourly?>?): String {
         val gson = Gson()
         return gson.toJson(list)
     }

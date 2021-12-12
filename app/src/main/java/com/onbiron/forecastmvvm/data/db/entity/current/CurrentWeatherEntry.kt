@@ -1,10 +1,8 @@
-package com.onbiron.forecastmvvm.data.db.entity
+package com.onbiron.forecastmvvm.data.db.entity.current
 
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import androidx.room.TypeConverters
-import com.google.gson.annotations.SerializedName
 
 const val CURRENT_WEATHER_ID = 0
 

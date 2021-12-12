@@ -2,31 +2,41 @@ package com.onbiron.forecastmvvm.ui.weather.future.list
 
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.onbiron.forecastmvvm.R
+import com.onbiron.forecastmvvm.databinding.FutureListWeatherFragmentBinding
+import com.onbiron.forecastmvvm.ui.base.ScopedFragment
+import kotlinx.coroutines.launch
+import org.kodein.di.KodeinAware
+import org.kodein.di.android.x.closestKodein
+import org.kodein.di.generic.instance
 
-class FutureListWeatherFragment : Fragment() {
-
-    companion object {
-        fun newInstance() = FutureListWeatherFragment()
-    }
-
+class FutureListWeatherFragment : ScopedFragment(), KodeinAware {
+    override val kodein by closestKodein()
+    private val viewModelFactory: FutureListWeatherViewModelFactory by instance()
     private lateinit var viewModel: FutureListWeatherViewModel
+    private lateinit var binding: FutureListWeatherFragmentBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.future_list_weather_fragment, container, false)
+        savedInstanceState: Bundle?,
+    ): View {
+        binding = FutureListWeatherFragmentBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(FutureListWeatherViewModel::class.java)
-        // TODO: Use the ViewModel
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewModel =
+            ViewModelProvider(this, viewModelFactory)[FutureListWeatherViewModel::class.java]
+        bindUI()
+    }
+
+    private fun bindUI() = launch {
+        val currentWeather = viewModel.futureWeather.await()
+        val weatherLocation = viewModel.location.await()
     }
 
 }

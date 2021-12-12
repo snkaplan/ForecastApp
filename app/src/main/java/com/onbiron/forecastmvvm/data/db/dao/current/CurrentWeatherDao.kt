@@ -1,12 +1,12 @@
-package com.onbiron.forecastmvvm.data.db
+package com.onbiron.forecastmvvm.data.db.dao.current
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.onbiron.forecastmvvm.data.db.entity.CURRENT_WEATHER_ID
-import com.onbiron.forecastmvvm.data.db.entity.CurrentWeatherEntry
+import com.onbiron.forecastmvvm.data.db.entity.current.CURRENT_WEATHER_ID
+import com.onbiron.forecastmvvm.data.db.entity.current.CurrentWeatherEntry
 
 @Dao
 interface CurrentWeatherDao {
@@ -14,5 +14,5 @@ interface CurrentWeatherDao {
     fun upsert(weather: CurrentWeatherEntry)
 
     @Query("select * from CURRENT_WEATHER where id = $CURRENT_WEATHER_ID")
-    fun getWeatherMetric(): LiveData<CurrentWeatherEntry>
+    fun getCurrentWeather(): LiveData<CurrentWeatherEntry>
 }

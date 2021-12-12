@@ -1,14 +1,14 @@
-package com.onbiron.forecastmvvm.data.network.response
+package com.onbiron.forecastmvvm.data.network.response.current
 
 
 import com.google.gson.annotations.SerializedName
 
-data class WeatherResponse(
+data class CurrentWeatherResponse(
     val base: String,
     val clouds: Clouds,
     val cod: Int,
     val coord: Coord,
-    val dt: Int,
+    val dt: Long,
     val id: Int,
     val main: Main,
     val name: String,

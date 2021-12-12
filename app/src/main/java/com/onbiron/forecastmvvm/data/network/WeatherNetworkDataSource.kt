@@ -6,8 +6,6 @@ import com.onbiron.forecastmvvm.data.network.response.future.FutureWeatherRespon
 import com.onbiron.forecastmvvm.data.provider.CustomLocation
 
 interface WeatherNetworkDataSource {
-    val downloadedCurrentWeather: LiveData<CurrentWeatherResponse>
-    val downloadedFutureWeather: LiveData<FutureWeatherResponse>
-    suspend fun fetchCurrentWeather(location: CustomLocation, unit: String)
-    suspend fun fetchFutureWeather(location: CustomLocation, unit: String)
+    suspend fun fetchCurrentWeather(location: CustomLocation, unit: String): CurrentWeatherResponse?
+    suspend fun fetchFutureWeather(location: CustomLocation, unit: String): FutureWeatherResponse?
 }

@@ -29,7 +29,7 @@ import org.kodein.di.generic.provider
 import org.kodein.di.generic.singleton
 
 class ForecastApplication : Application(), KodeinAware {
-    override val kodein: Kodein = Kodein.lazy {
+    override val kodein: Kodein = Kodein {
         import(androidXModule(this@ForecastApplication)) // produces us a context
         bind() from singleton { ForecastDatabase(instance()) }
         bind() from singleton { instance<ForecastDatabase>().currentWeatherDao() }

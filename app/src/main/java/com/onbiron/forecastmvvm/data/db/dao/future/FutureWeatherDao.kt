@@ -5,6 +5,8 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.onbiron.forecastmvvm.data.db.entity.WEATHER_LOCATION_ID
+import com.onbiron.forecastmvvm.data.db.entity.WeatherLocation
 import com.onbiron.forecastmvvm.data.db.entity.future.FUTURE_WEATHER_ID
 import com.onbiron.forecastmvvm.data.db.entity.future.FutureWeatherEntry
 
@@ -15,4 +17,7 @@ interface FutureWeatherDao {
 
     @Query("select * from FUTURE_WEATHER where id = $FUTURE_WEATHER_ID")
     fun getFutureWeather(): LiveData<FutureWeatherEntry>
+
+    @Query("SELECT * FROM FUTURE_WEATHER where id = $FUTURE_WEATHER_ID")
+    fun getFutureWeatherAsNormal(): FutureWeatherEntry?
 }

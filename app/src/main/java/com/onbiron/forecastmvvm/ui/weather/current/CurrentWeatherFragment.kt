@@ -6,12 +6,19 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.Nullable
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
 import com.onbiron.forecastmvvm.R
+import com.onbiron.forecastmvvm.data.db.entity.WeatherLocation
+import com.onbiron.forecastmvvm.data.db.entity.current.CurrentWeatherEntry
 import com.onbiron.forecastmvvm.databinding.CurrentWeatherFragmentBinding
 import com.onbiron.forecastmvvm.ui.base.ScopedFragment
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.closestKodein
@@ -20,6 +27,7 @@ import org.kodein.di.generic.instance
 // TODO Fetch weather when metric changed.
 class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
     override val kodein by closestKodein()
+    private val TAG = this::class.java.simpleName
     private val viewModelFactory: CurrentWeatherViewModelFactory by instance()
     private lateinit var viewModel: CurrentWeatherViewModel
     private lateinit var binding: CurrentWeatherFragmentBinding
@@ -35,7 +43,7 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel =
-            ViewModelProvider(this, viewModelFactory).get(CurrentWeatherViewModel::class.java)
+            ViewModelProvider(this, viewModelFactory)[CurrentWeatherViewModel::class.java]
         bindUI()
     }
 
@@ -43,8 +51,10 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
     // Operations in launch could be finish after activity destroyed then the app will be crashed.
     // So that we have to use our custom fragments which has custom coroutine lifecycle
     private fun bindUI() = launch {
-        val currentWeather = viewModel.weather.await()
-        val weatherLocation = viewModel.location.await()
+        val currentWeatherJob = async { viewModel.weather.await() }
+        val weatherLocationJob = async { viewModel.location.await() }
+        val currentWeather = currentWeatherJob.await()
+        val weatherLocation = weatherLocationJob.await()
 
         weatherLocation.observe(viewLifecycleOwner, Observer { location ->
             if (location == null) return@Observer
@@ -53,7 +63,7 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
         })
         currentWeather.observe(viewLifecycleOwner, Observer {
             if (it == null) {
-                Log.d("TAG", "bindUI: no data found ")
+                Log.d(TAG, "No data found for current weather.")
                 return@Observer
             }
             binding.groupLoading.visibility = View.GONE

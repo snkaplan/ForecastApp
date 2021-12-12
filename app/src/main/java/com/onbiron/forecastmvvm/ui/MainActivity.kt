@@ -38,6 +38,15 @@ class MainActivity : AppCompatActivity(), KodeinAware {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // val mainViewModel = ViewModelProvider(this, MainViewModelFactory()).get(MainViewModel::class.java)
+        if(hasLocationPermission()){
+            bindLocationManager()
+            bindUI()
+        } else {
+            requestLocationPermission()
+        }
+    }
+
+    private fun bindUI(){
         val binding = ActivityMainBinding.inflate(layoutInflater).apply {
             this.lifecycleOwner = this@MainActivity
             //this.viewmodel = mainViewModel
@@ -47,13 +56,6 @@ class MainActivity : AppCompatActivity(), KodeinAware {
         navController = Navigation.findNavController(this, R.id.nav_host_fragment)
         binding.bottomNav.setupWithNavController(navController)
         NavigationUI.setupActionBarWithNavController(this, navController)
-
-        requestLocationPermission()
-        if(hasLocationPermission()){
-            bindLocationManager()
-        } else {
-            requestLocationPermission()
-        }
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -80,10 +82,14 @@ class MainActivity : AppCompatActivity(), KodeinAware {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == MY_PERMISSION_ACCESS_COARSE_LOCATION) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                 bindLocationManager()
-            else
+            }
+            else{
                 Toast.makeText(this, "Please, set location manually in settings", Toast.LENGTH_LONG).show()
+            }
+            bindUI()
+
         }
     }
 

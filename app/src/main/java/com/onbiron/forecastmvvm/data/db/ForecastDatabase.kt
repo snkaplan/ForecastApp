@@ -13,7 +13,7 @@ import com.onbiron.forecastmvvm.data.db.entity.future.FutureWeatherEntry
 
 @Database(
         entities = [CurrentWeatherEntry::class, WeatherLocation::class, FutureWeatherEntry::class],
-        version = 2,
+        version = 1,
         exportSchema = false,
 )
 @TypeConverters(Converters::class)
@@ -36,6 +36,7 @@ abstract class ForecastDatabase: RoomDatabase(){
         private fun buildDatabase(context: Context) =
                 Room.databaseBuilder(context.applicationContext,
                         ForecastDatabase::class.java, "forecast.db").fallbackToDestructiveMigration().build()
+
 
     }
 }

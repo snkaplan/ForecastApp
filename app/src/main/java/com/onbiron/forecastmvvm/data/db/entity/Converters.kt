@@ -1,5 +1,6 @@
 package com.onbiron.forecastmvvm.data.db.entity
 
+import android.util.Log
 import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -24,7 +25,7 @@ object Converters {
 
     @TypeConverter
     fun fromStrToCurrentObject(value: String?): Current {
-        val listType: Type = object : TypeToken<String?>() {}.type
+        val listType: Type = object : TypeToken<Current?>() {}.type
         return Gson().fromJson(value, listType)
     }
 
@@ -36,7 +37,7 @@ object Converters {
 
     @TypeConverter
     fun fromStringToDaily(value: String?): List<Daily> {
-        val listType: Type = object : TypeToken<List<String?>?>() {}.type
+        val listType: Type = object : TypeToken<List<Daily?>?>() {}.type
         return Gson().fromJson(value, listType)
     }
 
@@ -49,7 +50,7 @@ object Converters {
 
     @TypeConverter
     fun fromStringToHourly(value: String?): List<Hourly> {
-        val listType: Type = object : TypeToken<List<String?>?>() {}.type
+        val listType: Type = object : TypeToken<List<Hourly?>?>() {}.type
         return Gson().fromJson(value, listType)
     }
 

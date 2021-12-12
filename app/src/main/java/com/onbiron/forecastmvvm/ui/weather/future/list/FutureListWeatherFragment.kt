@@ -6,8 +6,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
 import com.onbiron.forecastmvvm.databinding.FutureListWeatherFragmentBinding
 import com.onbiron.forecastmvvm.ui.base.ScopedFragment
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.closestKodein
@@ -15,6 +17,7 @@ import org.kodein.di.generic.instance
 
 class FutureListWeatherFragment : ScopedFragment(), KodeinAware {
     override val kodein by closestKodein()
+    private val TAG = this::class.java.simpleName
     private val viewModelFactory: FutureListWeatherViewModelFactory by instance()
     private lateinit var viewModel: FutureListWeatherViewModel
     private lateinit var binding: FutureListWeatherFragmentBinding
@@ -35,8 +38,17 @@ class FutureListWeatherFragment : ScopedFragment(), KodeinAware {
     }
 
     private fun bindUI() = launch {
-        val currentWeather = viewModel.futureWeather.await()
-        val weatherLocation = viewModel.location.await()
+        val futureWeatherJob = async { viewModel.futureWeather.await() }
+        val weatherLocationJob = async { viewModel.location.await() }
+        val futureWeather = futureWeatherJob.await()
+        val weatherLocation = weatherLocationJob.await()
+        futureWeather.observe(viewLifecycleOwner, Observer{ futureWeatherEntry ->
+            if (futureWeatherEntry == null) {
+                Log.d(TAG, "No data found for future weather")
+                return@Observer
+            }
+            Log.d("TAG", "bindUI: " + futureWeatherEntry.daily)
+        })
     }
 
 }

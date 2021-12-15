@@ -47,7 +47,6 @@ class FutureListWeatherFragment : ScopedFragment(), KodeinAware {
                 Log.d(TAG, "No data found for future weather")
                 return@Observer
             }
-            Log.d("TAG", "bindUI: " + futureWeatherEntry.daily)
         })
     }
 

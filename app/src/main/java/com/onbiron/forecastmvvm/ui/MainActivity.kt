@@ -52,10 +52,8 @@ class MainActivity : AppCompatActivity(), KodeinAware {
             //this.viewmodel = mainViewModel
         }
         setContentView(binding.root)
-        setSupportActionBar(binding.toolbar)
         navController = Navigation.findNavController(this, R.id.nav_host_fragment)
         binding.bottomNav.setupWithNavController(navController)
-        NavigationUI.setupActionBarWithNavController(this, navController)
     }
 
     override fun onSupportNavigateUp(): Boolean {

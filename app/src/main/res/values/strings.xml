@@ -16,4 +16,5 @@
     <string name="fahrenheit">Fahrenheit</string>
     <string name="milimeter">mm</string>
     <string name="inch">in</string>
+    <string name="humidity">Humidity</string>
 </resources>

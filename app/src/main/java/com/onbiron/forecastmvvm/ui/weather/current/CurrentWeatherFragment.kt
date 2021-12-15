@@ -23,6 +23,7 @@ import kotlinx.coroutines.launch
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.closestKodein
 import org.kodein.di.generic.instance
+import java.util.*
 
 // TODO Fetch weather when metric changed.
 class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
@@ -51,6 +52,10 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
     // Operations in launch could be finish after activity destroyed then the app will be crashed.
     // So that we have to use our custom fragments which has custom coroutine lifecycle
     private fun bindUI() = launch {
+        val cal: Calendar = Calendar.getInstance()
+        val dayOfWeek = cal.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.US)
+        val dayOfMonth = cal[Calendar.DAY_OF_MONTH]
+        binding.currentWeatherInclude.dateTv.text = "$dayOfWeek, $dayOfMonth"
         val currentWeatherJob = async { viewModel.weather.await() }
         val weatherLocationJob = async { viewModel.location.await() }
         val currentWeather = currentWeatherJob.await()
@@ -67,16 +72,14 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
                 return@Observer
             }
             binding.groupLoading.visibility = View.GONE
-            updateDateToToday()
-            updateTemperatures(it.temperature, it.feelsLike)
-            updateCondition(it.weatherDescriptions[0])
+            updateTemperatures(it.temperature, it.feelsLike, it.minTemp, it.maxTemp, it.weatherDescriptions[0])
             it.precip?.let { it1 -> updatePrecipitation(it1) }
             updateWind(it.windDir.toString(), it.windSpeed)
             updateVisibility(it.visibility)
-
+            updateHumidity(it.humidity)
             Glide.with(this@CurrentWeatherFragment)
                 .load("http://openweathermap.org/img/wn/${it.weatherIcons[0]}@2x.png")
-                .into(binding.imageViewConditionIcon)
+                .into(binding.currentWeatherInclude.temperatureIdentifierImage)
 
         })
     }
@@ -87,43 +90,51 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
     }
 
     private fun updateLocation(location: String) {
-        (activity as AppCompatActivity).supportActionBar?.title = location
+        binding.currentWeatherInclude.cityTv.text = location
     }
 
-    private fun updateDateToToday() {
-        (activity as AppCompatActivity).supportActionBar?.subtitle = getString(R.string.today)
-    }
-
-    private fun updateTemperatures(temperature: Double, feelsLike: Double) {
+    private fun updateTemperatures(temperature: Double, feelsLike: Double, min: Double, max: Double, condition: String) {
         val unitAbbreviation = chooseLocalizedUnitAbbreviation(getString(R.string.celcius),
             getString(R.string.fahrenheit))
-        binding.textViewTemperature.text = "$temperature$unitAbbreviation"
-        binding.textViewFeelsLikeTemperature.text =
-            "${getString(R.string.feels_like)} $feelsLike$unitAbbreviation"
-    }
+        binding.currentWeatherInclude.let {
+            it.temperatureTv.text = "$temperature°$unitAbbreviation"
+            it.minMaxTempTv.text = "$min° / $max°"
+            it.feelsLikeIncl.infoLbl.text = getString(R.string.feels_like)
+            it.feelsLikeIncl.infoTv.text = "$feelsLike°"
+            it.conditionTv.text = condition  //e.g Possible Rain
 
-    private fun updateCondition(condition: String) {
-        binding.textViewCondition.text = condition
-    }
+        }
 
+    }
     private fun updatePrecipitation(precipitationVolume: Double) {
         val unitAbbreviation =
             chooseLocalizedUnitAbbreviation(getString(R.string.milimeter), getString(R.string.inch))
-        binding.textViewPrecipitation.text =
-            "${getString(R.string.precipation)}: $precipitationVolume $unitAbbreviation"
+        binding.currentWeatherInclude.precipitationInclude.infoLbl.text =
+            getString(R.string.precipation)
+        binding.currentWeatherInclude.precipitationInclude.infoTv.text =
+            "$precipitationVolume $unitAbbreviation"
     }
 
     private fun updateWind(windDirection: String, windSpeed: Double) {
         val unitAbbreviation =
             chooseLocalizedUnitAbbreviation(getString(R.string.kph), getString(R.string.mph))
-        binding.textViewWind.text =
-            "${getString(R.string.wind)}: $windDirection, $windSpeed $unitAbbreviation"
+        binding.currentWeatherInclude.windInclude.infoLbl.text = getString(R.string.wind)
+        binding.currentWeatherInclude.windInclude.infoTv.text =
+            "$windDirection, $windSpeed $unitAbbreviation"
     }
 
     private fun updateVisibility(visibilityDistance: Int) {
         val unitAbbreviation =
             chooseLocalizedUnitAbbreviation(getString(R.string.meter), getString(R.string.mile))
-        binding.textViewVisibility.text =
-            "${getString(R.string.visibility)}: $visibilityDistance $unitAbbreviation"
+        binding.currentWeatherInclude.visibilityInclude.infoLbl.text =
+            getString(R.string.visibility)
+        binding.currentWeatherInclude.visibilityInclude.infoTv.text =
+            "$visibilityDistance $unitAbbreviation"
+    }
+
+    private fun updateHumidity(humidity: Double) {
+        binding.currentWeatherInclude.humidityInclude.infoLbl.text = getString(R.string.humidity)
+        binding.currentWeatherInclude.humidityInclude.infoTv.text =
+            "$humidity%"
     }
 }

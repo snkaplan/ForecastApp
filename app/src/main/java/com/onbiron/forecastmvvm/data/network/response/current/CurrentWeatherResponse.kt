@@ -43,7 +43,7 @@ data class Sys(
 data class Main(
     @SerializedName("feels_like")
     val feelsLike: Double,
-    val humidity: Int,
+    val humidity: Double,
     val pressure: Int,
     val temp: Double,
     @SerializedName("temp_max")

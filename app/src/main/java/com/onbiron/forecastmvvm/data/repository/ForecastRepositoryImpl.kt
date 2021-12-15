@@ -34,7 +34,6 @@ class ForecastRepositoryImpl(
             val weatherData = initCurrentWeatherData(isMetric)
             if(weatherData!= null){
                 persistFetchedCurrentWeather(weatherData)
-                Log.d(TAG, "getCurrentWeather: here")
             }
             return@withContext currentWeatherDao.getCurrentWeather()
         }
@@ -66,8 +65,11 @@ class ForecastRepositoryImpl(
         ))
         currentWeatherDao.upsert(
             CurrentWeatherEntry(fetchedWeather.main.feelsLike,
+                fetchedWeather.main.humidity,
                 null,
                 fetchedWeather.main.temp,
+                fetchedWeather.main.tempMin,
+                fetchedWeather.main.tempMax,
                 fetchedWeather.visibility,
                 fetchedWeather.weather.map { it.description },
                 fetchedWeather.weather.map { it.icon },

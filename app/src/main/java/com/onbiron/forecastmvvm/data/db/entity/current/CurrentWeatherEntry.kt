@@ -9,8 +9,11 @@ const val CURRENT_WEATHER_ID = 0
 @Entity(tableName = "current_weather")
 data class CurrentWeatherEntry(
     val feelsLike: Double,
+    val humidity: Double,
     val precip: Double?,
     val temperature: Double,
+    val minTemp: Double,
+    val maxTemp: Double,
     val visibility: Int,
     val weatherDescriptions: List<String>,
     val weatherIcons: List<String>,

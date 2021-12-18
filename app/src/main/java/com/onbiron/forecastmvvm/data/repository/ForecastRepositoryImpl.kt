@@ -19,6 +19,7 @@ import java.time.Instant
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
+import java.util.*
 
 class ForecastRepositoryImpl(
     private val currentWeatherDao: CurrentWeatherDao,
@@ -66,7 +67,6 @@ class ForecastRepositoryImpl(
         currentWeatherDao.upsert(
             CurrentWeatherEntry(fetchedWeather.main.feelsLike,
                 fetchedWeather.main.humidity,
-                null,
                 fetchedWeather.main.temp,
                 fetchedWeather.main.tempMin,
                 fetchedWeather.main.tempMax,

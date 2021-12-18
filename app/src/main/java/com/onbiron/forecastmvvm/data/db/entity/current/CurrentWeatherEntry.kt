@@ -10,7 +10,6 @@ const val CURRENT_WEATHER_ID = 0
 data class CurrentWeatherEntry(
     val feelsLike: Double,
     val humidity: Double,
-    val precip: Double?,
     val temperature: Double,
     val minTemp: Double,
     val maxTemp: Double,

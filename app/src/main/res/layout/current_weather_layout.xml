@@ -2,10 +2,12 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorBlue">
+        android:background="@drawable/main_bg">
+
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/header_guideline"
             android:layout_width="match_parent"
@@ -25,14 +27,14 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.50" />
+            app:layout_constraintGuide_percent="0.6" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/humidity_guideline"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.70" />
+            app:layout_constraintGuide_percent="0.80" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/header_cl"
@@ -92,9 +94,23 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintVertical_bias="0.1"
                 app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.1"
+                app:layout_constraintHorizontal_bias="0.4"
                 tools:text="+19°" />
+
+
+            <ImageView
+                android:id="@+id/temperature_identifier_image"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/temperature_tv"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.1"
+                app:layout_constraintHorizontal_bias="0.1"
+                />
 
             <TextView
                 android:id="@+id/condition_tv"
@@ -102,23 +118,13 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/colorWhite"
                 android:textSize="25sp"
-                android:textStyle="bold"
-                app:layout_constraintTop_toBottomOf="@+id/temperature_tv"
-                app:layout_constraintEnd_toStartOf="@+id/temperature_identifier_image"
-                app:layout_constraintStart_toStartOf="parent"
+                android:textStyle="italic"
+                android:fontFamily="sans-serif-thin"
                 app:layout_constraintBottom_toTopOf="@+id/min_max_temp_tv"
-                tools:text="Condition" />
-
-            <ImageView
-                android:id="@+id/temperature_identifier_image"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:src="@drawable/bg"
-                app:layout_constraintTop_toBottomOf="@+id/temperature_tv"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/condition_tv"
-                app:layout_constraintBottom_toTopOf="@+id/min_max_temp_tv"
-                app:layout_constraintVertical_bias="0"/>
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/temperature_tv"
+                tools:text="Condition" />
 
             <TextView
                 android:id="@+id/min_max_temp_tv"
@@ -127,34 +133,28 @@
                 android:textColor="@color/colorWhite"
                 android:textSize="15sp"
                 android:textStyle="italic"
-                app:layout_constraintTop_toBottomOf="@+id/temperature_identifier_image"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/condition_tv"
                 app:layout_constraintVertical_bias="0.1"
-                app:layout_constraintBottom_toBottomOf="parent"
                 tools:text="12° / 15°" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/timeline_temperature_cl"
-            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:layout_constraintBottom_toTopOf="@+id/time_temperature_guideline"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/temperature_guideline">
-            <include
-                android:id="@+id/timeline_include"
-                layout="@layout/timeline_temperature_layout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.2"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/timeline_rv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
@@ -172,9 +172,8 @@
                 layout="@layout/info_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/precipitation_include"
                 app:layout_constraintEnd_toStartOf="@+id/wind_include"
-                app:layout_constraintHorizontal_bias="0.2"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -183,9 +182,8 @@
                 layout="@layout/info_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/precipitation_include"
-                app:layout_constraintHorizontal_bias="0.2"
+                app:layout_constraintBottom_toTopOf="@+id/visibility_include"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/humidity_include"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -195,21 +193,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/feels_like_incl"
-                app:layout_constraintHorizontal_bias="0.2"
-                app:layout_constraintStart_toEndOf="@+id/wind_include"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <include
-                android:id="@+id/feels_like_incl"
-                layout="@layout/info_layout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/visibility_include"
-                app:layout_constraintHorizontal_bias="0.2"
-                app:layout_constraintStart_toEndOf="@+id/precipitation_include"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/humidity_include" />
+
 
             <include
                 android:id="@+id/visibility_include"
@@ -218,9 +205,8 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.2"
-                app:layout_constraintStart_toEndOf="@+id/feels_like_incl"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintStart_toEndOf="@+id/precipitation_include"
+                app:layout_constraintTop_toBottomOf="@+id/wind_include" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 

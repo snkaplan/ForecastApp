@@ -13,7 +13,7 @@ import com.onbiron.forecastmvvm.data.db.entity.future.FutureWeatherEntry
 
 @Database(
         entities = [CurrentWeatherEntry::class, WeatherLocation::class, FutureWeatherEntry::class],
-        version = 7,
+        version = 11,
         exportSchema = false,
 )
 @TypeConverters(Converters::class)

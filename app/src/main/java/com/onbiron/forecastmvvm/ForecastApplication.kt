@@ -33,17 +33,15 @@ class ForecastApplication : Application(), KodeinAware {
         import(androidXModule(this@ForecastApplication)) // produces us a context
         bind() from singleton { ForecastDatabase(instance()) }
         bind() from singleton { instance<ForecastDatabase>().currentWeatherDao() }
-        bind() from singleton { instance<ForecastDatabase>().futureWeatherDao() }
-        bind() from singleton { instance<ForecastDatabase>().weatherLocationDao() }
+        bind() from singleton { instance<ForecastDatabase>().forecastDao() }
         bind<ConnectivityInterceptor>() with singleton { ConnectivityInterceptorImpl(instance()) }
         bind() from singleton { WeatherApiService(instance(), getApiKey(), getApiStr()) }
-        bind<WeatherNetworkDataSource>() with singleton { WeatherNetworkDataSourceImpl(instance()) }
         bind() from provider { LocationServices.getFusedLocationProviderClient(instance<Context>()) }
         bind<LocationProvider>() with singleton { LocationProviderImpl(instance(), instance()) }
+        bind<WeatherNetworkDataSource>() with singleton { WeatherNetworkDataSourceImpl(instance(), instance()) }
         bind<UnitProvider>() with singleton { UnitProviderImpl(instance()) }
         bind<ForecastRepository>() with singleton {
             ForecastRepositoryImpl(instance(),
-                instance(),
                 instance(),
                 instance(),
                 instance())

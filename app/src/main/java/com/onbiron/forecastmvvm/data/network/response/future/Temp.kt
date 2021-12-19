@@ -1,8 +1,6 @@
 package com.onbiron.forecastmvvm.data.network.response.future
 
 
-import com.google.gson.annotations.SerializedName
-
 data class Temp(
     val day: Double,
     val eve: Double,

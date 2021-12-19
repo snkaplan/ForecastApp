@@ -3,6 +3,7 @@ package com.onbiron.forecastmvvm.data.db.entity.current
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.onbiron.forecastmvvm.data.db.entity.WeatherLocation
 
 const val CURRENT_WEATHER_ID = 0
 
@@ -17,7 +18,9 @@ data class CurrentWeatherEntry(
     val weatherDescriptions: List<String>,
     val weatherIcons: List<String>,
     val windDir: Int,
-    val windSpeed: Double
+    val windSpeed: Double,
+    val location: WeatherLocation
+
 ) {
     @PrimaryKey(autoGenerate = false)
     var id: Int = CURRENT_WEATHER_ID

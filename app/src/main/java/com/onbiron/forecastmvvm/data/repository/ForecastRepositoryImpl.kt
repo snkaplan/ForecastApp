@@ -1,19 +1,20 @@
 package com.onbiron.forecastmvvm.data.repository
 
+import android.text.format.DateUtils
 import android.util.Log
 import androidx.lifecycle.LiveData
 import com.onbiron.forecastmvvm.data.db.dao.current.CurrentWeatherDao
-import com.onbiron.forecastmvvm.data.db.dao.WeatherLocationDao
-import com.onbiron.forecastmvvm.data.db.dao.future.FutureWeatherDao
+import com.onbiron.forecastmvvm.data.db.dao.forecast.ForecastDao
 import com.onbiron.forecastmvvm.data.db.entity.current.CurrentWeatherEntry
 import com.onbiron.forecastmvvm.data.db.entity.WeatherLocation
-import com.onbiron.forecastmvvm.data.db.entity.future.FutureWeatherEntry
+import com.onbiron.forecastmvvm.data.db.entity.forecast.*
 import com.onbiron.forecastmvvm.data.network.WeatherNetworkDataSource
 import com.onbiron.forecastmvvm.data.network.response.current.CurrentWeatherResponse
+import com.onbiron.forecastmvvm.data.network.response.current.Sys
+import com.onbiron.forecastmvvm.data.network.response.future.Daily
 import com.onbiron.forecastmvvm.data.network.response.future.FutureWeatherResponse
+import com.onbiron.forecastmvvm.data.network.response.future.Weather
 import com.onbiron.forecastmvvm.data.provider.LocationProvider
-import com.onbiron.forecastmvvm.data.provider.UnitProvider
-import com.onbiron.forecastmvvm.internal.UnitSystem
 import kotlinx.coroutines.*
 import java.time.Instant
 import java.time.ZoneOffset
@@ -23,8 +24,7 @@ import java.util.*
 
 class ForecastRepositoryImpl(
     private val currentWeatherDao: CurrentWeatherDao,
-    private val futureWeatherDao: FutureWeatherDao,
-    private val weatherLocationDao: WeatherLocationDao,
+    private val forecastDao: ForecastDao,
     private val weatherNetworkDataSource: WeatherNetworkDataSource,
     private val locationProvider: LocationProvider,
 ) : ForecastRepository {
@@ -33,37 +33,24 @@ class ForecastRepositoryImpl(
     override suspend fun getCurrentWeather(isMetric: Boolean): LiveData<CurrentWeatherEntry> {
         return withContext(Dispatchers.IO) {
             val weatherData = initCurrentWeatherData(isMetric)
-            if(weatherData!= null){
+            if (weatherData != null) {
                 persistFetchedCurrentWeather(weatherData)
             }
             return@withContext currentWeatherDao.getCurrentWeather()
         }
     }
 
-    override suspend fun getFutureWeather(isMetric: Boolean): LiveData<FutureWeatherEntry> {
+    override suspend fun getForecast(isMetric: Boolean): LiveData<Forecast> {
         return withContext(Dispatchers.IO) {
-            val weatherData = initFutureWeatherData(isMetric)
-            if(weatherData!= null){
-                persistFetchedFutureWeather(weatherData)
+            val weatherData = initForecast(isMetric)
+            if (weatherData != null) {
+                persistForecastData(weatherData)
             }
-            return@withContext futureWeatherDao.getFutureWeather()
-        }
-    }
-
-    override suspend fun getWeatherLocation(): LiveData<WeatherLocation> {
-        return withContext(Dispatchers.IO) {
-            return@withContext weatherLocationDao.getLocation()
+            return@withContext forecastDao.getForecast()
         }
     }
 
     private fun persistFetchedCurrentWeather(fetchedWeather: CurrentWeatherResponse) {
-        weatherLocationDao.upsert(WeatherLocation(
-            fetchedWeather.sys.country,
-            fetchedWeather.name,
-            fetchedWeather.coord.lat,
-            fetchedWeather.coord.lon,
-            fetchedWeather.dt
-        ))
         currentWeatherDao.upsert(
             CurrentWeatherEntry(fetchedWeather.main.feelsLike,
                 fetchedWeather.main.humidity,
@@ -74,15 +61,81 @@ class ForecastRepositoryImpl(
                 fetchedWeather.weather.map { it.description },
                 fetchedWeather.weather.map { it.icon },
                 fetchedWeather.wind.deg,
-                fetchedWeather.wind.speed))
+                fetchedWeather.wind.speed,
+                WeatherLocation(
+                    fetchedWeather.sys.country,
+                    fetchedWeather.name,
+                    fetchedWeather.coord.lat,
+                    fetchedWeather.coord.lon,
+                    fetchedWeather.dt)
 
+            ))
     }
 
-    private fun persistFetchedFutureWeather(fetchedWeather: FutureWeatherResponse) {
-        futureWeatherDao.upsert(
-            FutureWeatherEntry(fetchedWeather.current,
-                fetchedWeather.daily,
-                fetchedWeather.hourly))
+    private fun persistForecastData(fetchedWeather: FutureWeatherResponse) {
+        val dailyForecasts = mutableListOf<ForecastDaily>()
+        val hourlyForecasts = mutableListOf<ForecastHourly>()
+        val minutelyForecasts = mutableListOf<ForecastMinutely>()
+        val address = locationProvider.getAddressFromLatLon(fetchedWeather.lat, fetchedWeather.lon)
+        val currentForecast = ForecastCurrent(fetchedWeather.current.dt,
+            fetchedWeather.current.feelsLike,
+            fetchedWeather.current.humidity,
+            fetchedWeather.current.temp,
+            extractForecastWeatherData(fetchedWeather.current.weather),
+            fetchedWeather.current.windSpeed,
+            fetchedWeather.current.uvi,
+            fetchedWeather.current.visibility,
+            fetchedWeather.current.pressure,
+            fetchedWeather.current.sunrise,
+            fetchedWeather.current.sunset)
+        for (item in fetchedWeather.daily) {
+            dailyForecasts.add(ForecastDaily(
+                item.dt,
+                item.humidity,
+                item.pop,
+                item.pressure,
+                item.rain,
+                item.sunrise,
+                item.sunset,
+                item.temp,
+                item.uvi,
+                extractForecastWeatherData(item.weather),
+                item.windSpeed,
+            ))
+        }
+        for (item in fetchedWeather.hourly) {
+            hourlyForecasts.add(ForecastHourly(
+                item.dt,
+                item.feelsLike,
+                item.humidity,
+                item.pop,
+                item.pressure,
+                item.temp,
+                item.uvi,
+                item.visibility,
+                extractForecastWeatherData(item.weather),
+                item.windSpeed
+            ))
+        }
+
+        for (item in fetchedWeather.minutely) {
+            minutelyForecasts.add(ForecastMinutely(
+                item.dt,
+                item.precipitation
+            ))
+        }
+
+        forecastDao.upsert(
+            Forecast(currentForecast,
+                dailyForecasts,
+                hourlyForecasts,
+                minutelyForecasts,
+                WeatherLocation(
+                    address?.countryName ?: "",
+                    address?.subAdminArea ?: "",
+                    fetchedWeather.lat,
+                    fetchedWeather.lon,
+                    System.currentTimeMillis())))
     }
 
     private suspend fun initCurrentWeatherData(isMetric: Boolean): CurrentWeatherResponse? {
@@ -96,12 +149,12 @@ class ForecastRepositoryImpl(
         return currentWeatherResponse
     }
 
-    private suspend fun initFutureWeatherData(isMetric: Boolean): FutureWeatherResponse? {
+    private suspend fun initForecast(isMetric: Boolean): FutureWeatherResponse? {
         var futureWeatherResponse: FutureWeatherResponse? = null
-        if (isFutureFetchNeeded()) {
+        if (isForecastFetchNeeded()) {
             val unit = if (isMetric) "metric" else "imperial"
             futureWeatherResponse =
-                weatherNetworkDataSource.fetchFutureWeather(locationProvider.getPreferredLocationString(),
+                weatherNetworkDataSource.fetchForecast(locationProvider.getPreferredLocationString(),
                     unit)
         }
         return futureWeatherResponse
@@ -109,16 +162,16 @@ class ForecastRepositoryImpl(
 
 
     private suspend fun isCurrentFetchNeeded(): Boolean {
-        val lastWeatherLocation = weatherLocationDao.getLocationAsNormal()
-        if (lastWeatherLocation == null) {
+        val currentWeatherEntry = currentWeatherDao.getCurrentWeatherAsNormal()
+        if (currentWeatherEntry == null) {
             Log.d(TAG, "No weather info found. Needs fetch current weather")
             return true
         }
-        if (locationProvider.hasLocationChanged(lastWeatherLocation)) {
+        if (locationProvider.hasLocationChanged(currentWeatherEntry.location)) {
             Log.d(TAG, "Location changed. Needs fetch current weather")
             return true
         }
-        val instant: Instant = Instant.ofEpochSecond(lastWeatherLocation.lastTimeEpoch)
+        val instant: Instant = Instant.ofEpochSecond(currentWeatherEntry.location.lastTimeEpoch)
         val zonedDateTime = ZonedDateTime.ofInstant(instant, ZoneOffset.UTC)
         val thirtyMinutesAgo = ZonedDateTime.now().minusMinutes(30)
         if (zonedDateTime.isBefore(thirtyMinutesAgo)) {
@@ -129,27 +182,34 @@ class ForecastRepositoryImpl(
         return false
     }
 
-    private suspend fun isFutureFetchNeeded(): Boolean {
-        val lastWeatherLocation = weatherLocationDao.getLocationAsNormal()
-        val futureWeatherEntry = futureWeatherDao.getFutureWeatherAsNormal()
-        if (futureWeatherEntry == null || lastWeatherLocation == null) {
-            Log.d(TAG, "No weather info found. Needs fetch future weather.")
+    private suspend fun isForecastFetchNeeded(): Boolean {
+        val forecastData = forecastDao.getForecastAsNormal()
+        if (forecastData == null) {
+            Log.d(TAG, "No weather info found. Needs fetch forecast.")
             return true
         }
-        if (locationProvider.hasLocationChanged(lastWeatherLocation)) {
-            Log.d(TAG, "Location changed. Needs fetch future weather.")
+        if (locationProvider.hasLocationChanged(forecastData.location)) {
+            Log.d(TAG, "Location changed. Needs fetch forecast.")
             return true
         }
-        val lastInstanst: Instant =
-            Instant.ofEpochSecond(futureWeatherEntry.daily[0].dt).truncatedTo(
+        val lastInstants: Instant =
+            Instant.ofEpochSecond(forecastData.daily[0].timestamp).truncatedTo(
                 ChronoUnit.DAYS)
         val nowInstant: Instant = ZonedDateTime.now().toInstant().truncatedTo(
             ChronoUnit.DAYS)
-        if (lastInstanst != nowInstant) {
-            Log.d(TAG, "Last fetch time is before now. Needs fetch future weather.")
+        if (lastInstants != nowInstant) {
+            Log.d(TAG, "Last fetch time is before now. Needs fetch forecast.")
             return true
         }
-        Log.d(TAG, "No need to fetch future weather.")
+        Log.d(TAG, "No need to fetch forecast.")
         return false
+    }
+
+    private fun extractForecastWeatherData(weather: List<Weather>): List<ForecastWeather> {
+        val forecastWeathers = mutableListOf<ForecastWeather>()
+        for (item in weather) {
+            forecastWeathers.add(ForecastWeather(item.description, item.icon, item.id, item.main))
+        }
+        return forecastWeathers
     }
 }

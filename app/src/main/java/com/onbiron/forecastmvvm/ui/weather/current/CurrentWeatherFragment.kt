@@ -1,35 +1,27 @@
 package com.onbiron.forecastmvvm.ui.weather.current
 
-import android.graphics.Color
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import android.util.Log
+import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.annotation.Nullable
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.onbiron.forecastmvvm.R
-import com.onbiron.forecastmvvm.data.db.entity.WeatherLocation
-import com.onbiron.forecastmvvm.data.db.entity.current.CurrentWeatherEntry
-import com.onbiron.forecastmvvm.data.network.response.future.Hourly
+import com.onbiron.forecastmvvm.data.db.entity.forecast.ForecastDaily
+import com.onbiron.forecastmvvm.data.db.entity.forecast.ForecastHourly
 import com.onbiron.forecastmvvm.databinding.CurrentWeatherFragmentBinding
 import com.onbiron.forecastmvvm.ui.base.ScopedFragment
 import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.closestKodein
 import org.kodein.di.generic.instance
 import java.time.Instant
-import java.time.ZoneId
 import java.util.*
 
 // TODO Fetch weather when metric changed.
@@ -63,40 +55,32 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
         val dayOfWeek = cal.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.US)
         val dayOfMonth = cal[Calendar.DAY_OF_MONTH]
         binding.currentWeatherInclude.dateTv.text = "$dayOfWeek, $dayOfMonth"
-        val currentWeatherJob = async { viewModel.weather.await() }
-        val weatherLocationJob = async { viewModel.location.await() }
         val forecastJob = async { viewModel.forecast.await() }
-        val currentWeather = currentWeatherJob.await()
-        val weatherLocation = weatherLocationJob.await()
         val forecast = forecastJob.await()
-
-        weatherLocation.observe(viewLifecycleOwner, Observer { location ->
-            if (location == null) return@Observer
-            updateLocation(location.name)
-        })
-        currentWeather.observe(viewLifecycleOwner, Observer {
-            if (it == null) {
-                Log.d(TAG, "No data found for current weather.")
-                return@Observer
-            }
-            binding.groupLoading.visibility = View.GONE
-            updateTemperatures(it.temperature,
-                it.feelsLike,
-                it.minTemp,
-                it.maxTemp,
-                it.weatherDescriptions[0])
-            updateWind(it.windDir.toString(), it.windSpeed)
-            updateVisibility(it.visibility)
-            updateHumidity(it.humidity)
-            Glide.with(this@CurrentWeatherFragment)
-                .load("http://openweathermap.org/img/wn/${it.weatherIcons[0]}@2x.png")
-                .into(binding.currentWeatherInclude.temperatureIdentifierImage)
-        })
-
-        forecast.observe(viewLifecycleOwner, Observer {
+        forecast.observe(viewLifecycleOwner, {
             var initialPos = 0
+            updateLocation(it.location.name)
+            binding.groupLoading.visibility = View.GONE
+            var currentDay: ForecastDaily? = null
+            for(item in it.daily){
+                if(DateUtils.isToday(item.timestamp * 1000)){
+                    currentDay = item
+                    break
+                }
+            }
+            updateTemperatures(it.current.temperature,
+                it.current.feelsLike,
+                currentDay?.temperature?.min.toString(),
+                currentDay?.temperature?.max.toString(),
+                it.current.forecastWeather[0].description)
+            updateWind(it.current.windSpeed)
+            updateVisibility(it.current.visibility)
+            updateHumidity(it.current.humidity)
+            Glide.with(this@CurrentWeatherFragment)
+                .load("http://openweathermap.org/img/wn/${it.current.forecastWeather[0].icon}@2x.png")
+                .into(binding.currentWeatherInclude.temperatureIdentifierImage)
             for(idx in it.hourly.indices){
-                val dt = Instant.ofEpochSecond(it.hourly[idx].dt)
+                val dt = Instant.ofEpochSecond(it.hourly[idx].timestamp)
                 if(Instant.now().isBefore(dt)){
                     initialPos = idx + 1
                     break
@@ -106,9 +90,9 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
                 layoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
                 setItemViewCacheSize(48)
                 adapter = CurrentRecyclerViewAdapter(it.hourly
-                ) { selectedHourly: Hourly -> hourlyItemClicked(selectedHourly) }
+                ) { selectedHourly: ForecastHourly -> hourlyItemClicked(selectedHourly) }
                 scrollToPosition(initialPos)
-                updatePrecipitation(it.daily[1].rain)
+                updatePrecipitation(currentDay?.pop.toString())
             }
         })
 
@@ -122,8 +106,8 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
     private fun updateTemperatures(
         temperature: Double,
         feelsLike: Double,
-        min: Double,
-        max: Double,
+        min: String,
+        max: String,
         condition: String,
     ) {
         val unitAbbreviation = chooseLocalizedUnitAbbreviation(getString(R.string.celcius),
@@ -140,7 +124,7 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
         binding.currentWeatherInclude.cityTv.text = location
     }
 
-    private fun updatePrecipitation(precipitationVolume: Double) {
+    private fun updatePrecipitation(precipitationVolume: String  = "-") {
         val unitAbbreviation =
             chooseLocalizedUnitAbbreviation(getString(R.string.milimeter), getString(R.string.inch))
         binding.currentWeatherInclude.precipitationInclude.infoImage.setImageDrawable(
@@ -150,7 +134,7 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
             "$precipitationVolume $unitAbbreviation"
     }
 
-    private fun updateWind(windDirection: String, windSpeed: Double) {
+    private fun updateWind(windSpeed: Double) {
         val unitAbbreviation =
             chooseLocalizedUnitAbbreviation(getString(R.string.kph), getString(R.string.mph))
         binding.currentWeatherInclude.windInclude.infoImage.setImageDrawable(ResourcesCompat.getDrawable(
@@ -159,7 +143,7 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
             "$windSpeed $unitAbbreviation"
     }
 
-    private fun updateVisibility(visibilityDistance: Int) {
+    private fun updateVisibility(visibilityDistance: Double) {
         val unitAbbreviation =
             chooseLocalizedUnitAbbreviation(getString(R.string.meter), getString(R.string.mile))
         binding.currentWeatherInclude.visibilityInclude.infoImage.setImageDrawable(ResourcesCompat.getDrawable(
@@ -175,7 +159,7 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
             "$humidity%"
     }
 
-    private fun hourlyItemClicked(hourly: Hourly) {
+    private fun hourlyItemClicked(hourly: ForecastHourly) {
         Toast.makeText(activity, "Hourly Info: $hourly", Toast.LENGTH_LONG).show()
     }
 }

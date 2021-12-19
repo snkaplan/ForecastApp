@@ -38,12 +38,10 @@ class FutureListWeatherFragment : ScopedFragment(), KodeinAware {
     }
 
     private fun bindUI() = launch {
-        val futureWeatherJob = async { viewModel.futureWeather.await() }
-        val weatherLocationJob = async { viewModel.location.await() }
-        val futureWeather = futureWeatherJob.await()
-        val weatherLocation = weatherLocationJob.await()
-        futureWeather.observe(viewLifecycleOwner, Observer{ futureWeatherEntry ->
-            if (futureWeatherEntry == null) {
+        val forecastJob = async { viewModel.forecast.await() }
+        val forecast = forecastJob.await()
+        forecast.observe(viewLifecycleOwner, Observer{ forecast ->
+            if (forecast == null) {
                 Log.d(TAG, "No data found for future weather")
                 return@Observer
             }

@@ -5,10 +5,12 @@ import com.onbiron.forecastmvvm.data.WeatherApiService
 import com.onbiron.forecastmvvm.data.network.response.current.CurrentWeatherResponse
 import com.onbiron.forecastmvvm.data.network.response.future.FutureWeatherResponse
 import com.onbiron.forecastmvvm.data.provider.CustomLocation
+import com.onbiron.forecastmvvm.data.provider.LocationProvider
 import com.onbiron.forecastmvvm.internal.NoConnectivityException
 
 class WeatherNetworkDataSourceImpl(
     private val weatherApiService: WeatherApiService,
+    private val locationProvider: LocationProvider
 ): WeatherNetworkDataSource {
 
     override suspend fun fetchCurrentWeather(
@@ -31,16 +33,19 @@ class WeatherNetworkDataSourceImpl(
         return null
     }
 
-    override suspend fun fetchFutureWeather(location: CustomLocation, unit: String): FutureWeatherResponse? {
+    override suspend fun fetchForecast(location: CustomLocation, unit: String): FutureWeatherResponse? {
         try {
-            return if (location.name.isNullOrEmpty()) {
-                weatherApiService
-                    .getFutureWeatherByLatLonAsync(location.lat!!, location.lon!!, unit)
+            if (location.name.isNullOrEmpty()) {
+                 return weatherApiService
+                    .getForecastByLatLonAsync(location.lat!!, location.lon!!, unit)
                     .await()
             } else {
-                weatherApiService
-                    .getFutureWeatherByNameAsync(location.name, unit)
-                    .await()
+                val addressFromName = locationProvider.getAddressFromName(location.name)
+                if(addressFromName!=null){
+                    return weatherApiService
+                        .getForecastByLatLonAsync(addressFromName.latitude, addressFromName.longitude, unit)
+                        .await()
+                }
             }
         } catch (e: NoConnectivityException) {
             Log.e("Connectivity", "No internet connection", e)

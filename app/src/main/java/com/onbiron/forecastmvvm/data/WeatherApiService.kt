@@ -29,13 +29,7 @@ interface WeatherApiService {
     ): Deferred<CurrentWeatherResponse>
 
     @GET("onecall")
-    fun getFutureWeatherByNameAsync(
-        @Query("q") location: String,
-        @Query("units") unit: String,
-    ): Deferred<FutureWeatherResponse>
-
-    @GET("onecall")
-    fun getFutureWeatherByLatLonAsync(
+    fun getForecastByLatLonAsync(
         @Query("lat") lat: Double,
         @Query("lon") lon: Double,
         @Query("units") unit: String,

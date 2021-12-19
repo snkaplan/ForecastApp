@@ -2,11 +2,9 @@ package com.onbiron.forecastmvvm.data.repository
 
 import androidx.lifecycle.LiveData
 import com.onbiron.forecastmvvm.data.db.entity.current.CurrentWeatherEntry
-import com.onbiron.forecastmvvm.data.db.entity.WeatherLocation
-import com.onbiron.forecastmvvm.data.db.entity.future.FutureWeatherEntry
+import com.onbiron.forecastmvvm.data.db.entity.forecast.Forecast
 
 interface ForecastRepository {
     suspend fun getCurrentWeather(isMetric: Boolean): LiveData<CurrentWeatherEntry>
-    suspend fun getFutureWeather(isMetric: Boolean): LiveData<FutureWeatherEntry>
-    suspend fun getWeatherLocation(): LiveData<WeatherLocation>
+    suspend fun getForecast(isMetric: Boolean): LiveData<Forecast>
 }

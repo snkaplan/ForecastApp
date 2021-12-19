@@ -6,12 +6,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.onbiron.forecastmvvm.data.db.entity.forecast.ForecastHourly
-import com.onbiron.forecastmvvm.data.network.response.future.Hourly
 import com.onbiron.forecastmvvm.databinding.TimelineTemperatureItemBinding
 import java.text.SimpleDateFormat
-import java.time.Instant
-import java.time.ZoneId
-import java.time.temporal.TemporalField
 import java.util.*
 
 class CurrentRecyclerViewAdapter(

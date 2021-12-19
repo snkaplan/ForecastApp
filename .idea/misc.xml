@@ -17,10 +17,15 @@
         <entry key="app/src/main/res/drawable/wind_icon.xml" value="0.32916666666666666" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.19791666666666666" />
         <entry key="app/src/main/res/layout/current_weather_fragment.xml" value="0.25" />
-        <entry key="app/src/main/res/layout/current_weather_layout.xml" value="0.284375" />
+        <entry key="app/src/main/res/layout/current_weather_layout.xml" value="0.22" />
         <entry key="app/src/main/res/layout/current_weather_layout_2.xml" value="0.2828125" />
+        <entry key="app/src/main/res/layout/forecast_detail_fragment.xml" value="0.19791666666666666" />
+        <entry key="app/src/main/res/layout/forecast_fragment.xml" value="0.19791666666666666" />
+        <entry key="app/src/main/res/layout/forecast_layout.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/forecast_recycler_view_item.xml" value="0.35572916666666665" />
         <entry key="app/src/main/res/layout/future_detail_weather_fragment.xml" value="0.19791666666666666" />
         <entry key="app/src/main/res/layout/future_list_weather_fragment.xml" value="0.1875" />
+        <entry key="app/src/main/res/layout/future_weather_item.xml" value="0.33" />
         <entry key="app/src/main/res/layout/info_layout.xml" value="0.5" />
         <entry key="app/src/main/res/layout/layout_weather.xml" value="0.2828125" />
         <entry key="app/src/main/res/layout/timeline_temperature_item.xml" value="0.75" />

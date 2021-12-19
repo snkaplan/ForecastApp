@@ -19,7 +19,7 @@ import com.onbiron.forecastmvvm.data.provider.UnitProviderImpl
 import com.onbiron.forecastmvvm.data.repository.ForecastRepository
 import com.onbiron.forecastmvvm.data.repository.ForecastRepositoryImpl
 import com.onbiron.forecastmvvm.ui.weather.current.CurrentWeatherViewModelFactory
-import com.onbiron.forecastmvvm.ui.weather.future.list.FutureListWeatherViewModelFactory
+import com.onbiron.forecastmvvm.ui.weather.forecast.list.ForecastViewModelProvider
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.androidXModule
@@ -47,7 +47,7 @@ class ForecastApplication : Application(), KodeinAware {
                 instance())
         }
         bind() from provider { CurrentWeatherViewModelFactory(instance(), instance()) }
-        bind() from provider { FutureListWeatherViewModelFactory(instance(), instance()) }
+        bind() from provider { ForecastViewModelProvider(instance(), instance()) }
 
     }
 

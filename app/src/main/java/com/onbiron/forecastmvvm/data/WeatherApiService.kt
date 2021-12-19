@@ -3,7 +3,7 @@ package com.onbiron.forecastmvvm.data
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.onbiron.forecastmvvm.data.network.ConnectivityInterceptor
 import com.onbiron.forecastmvvm.data.network.response.current.CurrentWeatherResponse
-import com.onbiron.forecastmvvm.data.network.response.future.FutureWeatherResponse
+import com.onbiron.forecastmvvm.data.network.response.forecast.ForecastResponse
 import kotlinx.coroutines.Deferred
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -33,7 +33,7 @@ interface WeatherApiService {
         @Query("lat") lat: Double,
         @Query("lon") lon: Double,
         @Query("units") unit: String,
-    ): Deferred<FutureWeatherResponse>
+    ): Deferred<ForecastResponse>
 
     companion object {
         // invoke is a special method. We can call this by WeatherApiService()

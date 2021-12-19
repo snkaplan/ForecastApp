@@ -10,7 +10,7 @@
             android:background="@drawable/info_layout_gradient_bg"
             android:layout_gravity="center">
             <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/header_guideline"
+                android:id="@+id/title_guideline"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
@@ -21,22 +21,22 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/colorWhite"
                 android:fontFamily="@font/roboto_mono_thin"
-                android:textSize="12sp"
+                android:textSize="@dimen/s1_text_size"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="@+id/header_guideline"
+                app:layout_constraintBottom_toBottomOf="@+id/title_guideline"
                 app:layout_constraintVertical_bias="0.3"
                 tools:text="Label" />
 
             <ImageView
                 android:id="@+id/info_image"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:contentDescription="Info"
+                android:layout_width="@dimen/s1_image_size"
+                android:layout_height="@dimen/s1_image_size"
+                android:contentDescription="@string/image_description"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/header_guideline"
+                app:layout_constraintTop_toBottomOf="@+id/title_guideline"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintHorizontal_bias="0.1"/>
 
@@ -48,7 +48,7 @@
                 android:fontFamily="@font/roboto_mono_medium"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/info_image"
-                app:layout_constraintTop_toBottomOf="@+id/header_guideline"
+                app:layout_constraintTop_toBottomOf="@+id/title_guideline"
                 app:layout_constraintBottom_toBottomOf="parent"
                 tools:text="Label" />
         </androidx.constraintlayout.widget.ConstraintLayout>

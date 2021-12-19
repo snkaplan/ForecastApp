@@ -37,7 +37,6 @@ class MainActivity : AppCompatActivity(), KodeinAware {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // val mainViewModel = ViewModelProvider(this, MainViewModelFactory()).get(MainViewModel::class.java)
         if(hasLocationPermission()){
             bindLocationManager()
             bindUI()

@@ -1,9 +1,9 @@
-package com.onbiron.forecastmvvm.data.network.response.future
+package com.onbiron.forecastmvvm.data.network.response.forecast
 
 
 import com.google.gson.annotations.SerializedName
 
-data class Current(
+data class Hourly(
     val clouds: Double,
     @SerializedName("dew_point")
     val dewPoint: Double,
@@ -11,9 +11,8 @@ data class Current(
     @SerializedName("feels_like")
     val feelsLike: Double,
     val humidity: Double,
+    val pop: Double,
     val pressure: Double,
-    val sunrise: Double,
-    val sunset: Double,
     val temp: Double,
     val uvi: Double,
     val visibility: Double,

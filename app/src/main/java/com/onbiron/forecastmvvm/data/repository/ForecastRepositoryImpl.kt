@@ -1,6 +1,5 @@
 package com.onbiron.forecastmvvm.data.repository
 
-import android.text.format.DateUtils
 import android.util.Log
 import androidx.lifecycle.LiveData
 import com.onbiron.forecastmvvm.data.db.dao.current.CurrentWeatherDao
@@ -10,10 +9,8 @@ import com.onbiron.forecastmvvm.data.db.entity.WeatherLocation
 import com.onbiron.forecastmvvm.data.db.entity.forecast.*
 import com.onbiron.forecastmvvm.data.network.WeatherNetworkDataSource
 import com.onbiron.forecastmvvm.data.network.response.current.CurrentWeatherResponse
-import com.onbiron.forecastmvvm.data.network.response.current.Sys
-import com.onbiron.forecastmvvm.data.network.response.future.Daily
-import com.onbiron.forecastmvvm.data.network.response.future.FutureWeatherResponse
-import com.onbiron.forecastmvvm.data.network.response.future.Weather
+import com.onbiron.forecastmvvm.data.network.response.forecast.ForecastResponse
+import com.onbiron.forecastmvvm.data.network.response.forecast.Weather
 import com.onbiron.forecastmvvm.data.provider.LocationProvider
 import kotlinx.coroutines.*
 import java.time.Instant
@@ -72,7 +69,7 @@ class ForecastRepositoryImpl(
             ))
     }
 
-    private fun persistForecastData(fetchedWeather: FutureWeatherResponse) {
+    private fun persistForecastData(fetchedWeather: ForecastResponse) {
         val dailyForecasts = mutableListOf<ForecastDaily>()
         val hourlyForecasts = mutableListOf<ForecastHourly>()
         val minutelyForecasts = mutableListOf<ForecastMinutely>()
@@ -149,15 +146,15 @@ class ForecastRepositoryImpl(
         return currentWeatherResponse
     }
 
-    private suspend fun initForecast(isMetric: Boolean): FutureWeatherResponse? {
-        var futureWeatherResponse: FutureWeatherResponse? = null
+    private suspend fun initForecast(isMetric: Boolean): ForecastResponse? {
+        var forecastResponse: ForecastResponse? = null
         if (isForecastFetchNeeded()) {
             val unit = if (isMetric) "metric" else "imperial"
-            futureWeatherResponse =
+            forecastResponse =
                 weatherNetworkDataSource.fetchForecast(locationProvider.getPreferredLocationString(),
                     unit)
         }
-        return futureWeatherResponse
+        return forecastResponse
     }
 
 

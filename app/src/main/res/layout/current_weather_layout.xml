@@ -5,8 +5,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/main_bg">
+        android:layout_height="match_parent">
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/header_guideline"
@@ -51,7 +50,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="casual"
                 android:textColor="@color/colorOffWhite"
-                android:textSize="20sp"
+                android:textSize="@dimen/m1_text_size"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -65,7 +64,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="casual"
                 android:textColor="@color/colorWhite"
-                android:textSize="25sp"
+                android:textSize="@dimen/m2_text_size"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -91,7 +90,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/colorWhite"
-                android:textSize="45sp"
+                android:textSize="@dimen/b1_text_size"
                 android:fontFamily="@font/roboto_mono_bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -104,8 +103,9 @@
 
             <ImageView
                 android:id="@+id/temperature_identifier_image"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
+                android:contentDescription="@string/image_description"
+                android:layout_width="@dimen/b1_image_size"
+                android:layout_height="@dimen/b1_image_size"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/temperature_tv"
@@ -119,7 +119,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/colorWhite"
-                android:textSize="25sp"
+                android:textSize="@dimen/m2_text_size"
                 android:fontFamily="@font/roboto_mono_thin_italic"
                 app:layout_constraintBottom_toTopOf="@+id/min_max_temp_tv"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -132,7 +132,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/colorWhite"
-                android:textSize="15sp"
+                android:textSize="@dimen/s2_text_size"
                 android:fontFamily="@font/roboto_mono_semi_bold_italic"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -161,7 +161,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/weather_today"
-                android:textColor="#D9DFEA"
+                android:textColor="@color/header_color"
                 android:fontFamily="@font/roboto_mono_semi_bold_italic"
                 app:layout_constraintHorizontal_bias="0.01"
                 app:layout_constraintStart_toStartOf="parent"
@@ -197,7 +197,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/more_details"
-                android:textColor="#D9DFEA"
+                android:textColor="@color/header_color"
                 android:fontFamily="@font/roboto_mono_semi_bold_italic"
                 app:layout_constraintHorizontal_bias="0.01"
                 app:layout_constraintStart_toStartOf="parent"

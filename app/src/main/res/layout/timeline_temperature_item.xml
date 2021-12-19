@@ -15,7 +15,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/colorOffWhite"
             android:fontFamily="@font/roboto_mono_thin"
-            android:textSize="12sp"
+            android:textSize="@dimen/s1_text_size"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -34,8 +34,9 @@
 
         <ImageView
             android:id="@+id/temp_img"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:contentDescription="@string/image_description"
+            android:layout_width="@dimen/m1_image_size"
+            android:layout_height="@dimen/m1_image_size"
             android:backgroundTint="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

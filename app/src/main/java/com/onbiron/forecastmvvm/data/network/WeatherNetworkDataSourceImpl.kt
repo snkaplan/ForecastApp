@@ -3,7 +3,7 @@ package com.onbiron.forecastmvvm.data.network
 import android.util.Log
 import com.onbiron.forecastmvvm.data.WeatherApiService
 import com.onbiron.forecastmvvm.data.network.response.current.CurrentWeatherResponse
-import com.onbiron.forecastmvvm.data.network.response.future.FutureWeatherResponse
+import com.onbiron.forecastmvvm.data.network.response.forecast.ForecastResponse
 import com.onbiron.forecastmvvm.data.provider.CustomLocation
 import com.onbiron.forecastmvvm.data.provider.LocationProvider
 import com.onbiron.forecastmvvm.internal.NoConnectivityException
@@ -33,7 +33,7 @@ class WeatherNetworkDataSourceImpl(
         return null
     }
 
-    override suspend fun fetchForecast(location: CustomLocation, unit: String): FutureWeatherResponse? {
+    override suspend fun fetchForecast(location: CustomLocation, unit: String): ForecastResponse? {
         try {
             if (location.name.isNullOrEmpty()) {
                  return weatherApiService

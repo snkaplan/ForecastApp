@@ -1,6 +1,6 @@
 package com.onbiron.forecastmvvm.data.db.entity.forecast
 
-import com.onbiron.forecastmvvm.data.network.response.future.Temp
+import com.onbiron.forecastmvvm.data.network.response.forecast.Temp
 
 data class ForecastDaily(
     val timestamp: Long,

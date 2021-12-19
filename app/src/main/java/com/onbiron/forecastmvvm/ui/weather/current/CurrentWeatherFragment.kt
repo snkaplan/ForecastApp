@@ -23,7 +23,6 @@ import org.kodein.di.generic.instance
 import java.time.Instant
 import java.util.*
 
-// TODO Fetch weather when metric changed.
 class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
     override val kodein by closestKodein()
     private val TAG = this::class.java.simpleName
@@ -50,6 +49,8 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
     // Operations in launch could be finish after activity destroyed then the app will be crashed.
     // So that we have to use our custom fragments which has custom coroutine lifecycle
     private fun bindUI() = launch {
+        binding.groupLoading.visibility = View.VISIBLE
+        binding.currentWeatherCl.visibility = View.GONE
         val cal: Calendar = Calendar.getInstance()
         val dayOfWeek = cal.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.US)
         val dayOfMonth = cal[Calendar.DAY_OF_MONTH]
@@ -59,7 +60,6 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
         forecast.observe(viewLifecycleOwner, {
             var initialPos = 0
             updateLocation(it.location.name)
-            binding.groupLoading.visibility = View.GONE
             var currentDay: ForecastDaily? = null
             for(item in it.daily){
                 if(DateUtils.isToday(item.timestamp * 1000)){
@@ -68,7 +68,6 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
                 }
             }
             updateTemperatures(it.current.temperature,
-                it.current.feelsLike,
                 currentDay?.temperature?.min.toString(),
                 currentDay?.temperature?.max.toString(),
                 it.current.forecastWeather[0].description)
@@ -95,6 +94,8 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
                 scrollToPosition(initialPos)
                 updatePrecipitation(currentDay?.pop.toString())
             }
+            binding.groupLoading.visibility = View.GONE
+            binding.currentWeatherCl.visibility = View.VISIBLE
         })
 
     }
@@ -106,7 +107,6 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
 
     private fun updateTemperatures(
         temperature: Double,
-        feelsLike: Double,
         min: String,
         max: String,
         condition: String,

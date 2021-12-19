@@ -1,4 +1,4 @@
-package com.onbiron.forecastmvvm.data.network.response.future
+package com.onbiron.forecastmvvm.data.network.response.forecast
 
 
 data class Temp(

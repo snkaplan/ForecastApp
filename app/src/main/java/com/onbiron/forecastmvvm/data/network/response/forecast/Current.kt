@@ -1,27 +1,22 @@
-package com.onbiron.forecastmvvm.data.network.response.future
+package com.onbiron.forecastmvvm.data.network.response.forecast
 
 
 import com.google.gson.annotations.SerializedName
 
-data class Daily(
+data class Current(
     val clouds: Double,
     @SerializedName("dew_point")
     val dewPoint: Double,
     val dt: Long,
     @SerializedName("feels_like")
-    val feelsLike: FeelsLike,
+    val feelsLike: Double,
     val humidity: Double,
-    @SerializedName("moon_phase")
-    val moonPhase: Double,
-    val moonrise: Double,
-    val moonset: Double,
-    val pop: Double,
     val pressure: Double,
-    val rain: Double,
     val sunrise: Double,
     val sunset: Double,
-    val temp: Temp,
+    val temp: Double,
     val uvi: Double,
+    val visibility: Double,
     val weather: List<Weather>,
     @SerializedName("wind_deg")
     val windDeg: Double,

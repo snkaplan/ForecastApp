@@ -8,15 +8,15 @@
         android:background="@drawable/main_bg">
 
         <androidx.constraintlayout.widget.Group
-            android:id="@+id/group_loading"
+            android:id="@+id/forecast_group_loading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:constraint_referenced_ids="progressBar_loading, textView_loading"
+            app:constraint_referenced_ids="forecast_progressBar_loading, forecast_textView_loading"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ProgressBar
-            android:id="@+id/progressBar_loading"
+            android:id="@+id/forecast_progressBar_loading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:indeterminate="true"
@@ -26,7 +26,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/textView_loading"
+            android:id="@+id/forecast_textView_loading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="casual"
@@ -36,17 +36,17 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/progressBar_loading"
+            app:layout_constraintTop_toBottomOf="@+id/forecast_progressBar_loading"
             app:layout_constraintVertical_bias="0.0" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/current_weather_cl"
+            android:id="@+id/forecast_cl"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <include
-                android:id="@+id/current_weather_include"
-                layout="@layout/current_weather_layout" />
+                android:id="@+id/forecast_include"
+                layout="@layout/forecast_layout" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

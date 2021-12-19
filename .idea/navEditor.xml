@@ -20,25 +20,13 @@
                       </LayoutPositions>
                     </value>
                   </entry>
-                  <entry key="futureDetailWeatherFragment">
+                  <entry key="forecastFragment">
                     <value>
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="12" />
-                            <option name="y" value="368" />
-                          </Point>
-                        </option>
-                      </LayoutPositions>
-                    </value>
-                  </entry>
-                  <entry key="futureListWeatherFragment">
-                    <value>
-                      <LayoutPositions>
-                        <option name="myPosition">
-                          <Point>
-                            <option name="x" value="256" />
-                            <option name="y" value="12" />
+                            <option name="x" value="262" />
+                            <option name="y" value="13" />
                           </Point>
                         </option>
                       </LayoutPositions>

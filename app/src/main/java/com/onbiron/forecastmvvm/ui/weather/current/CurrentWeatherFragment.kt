@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.res.ResourcesCompat
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.onbiron.forecastmvvm.R
@@ -76,6 +75,8 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
             updateWind(it.current.windSpeed)
             updateVisibility(it.current.visibility)
             updateHumidity(it.current.humidity)
+            updatePressure(it.current.pressure)
+            updateUvIndex(it.current.uvIndex)
             Glide.with(this@CurrentWeatherFragment)
                 .load("http://openweathermap.org/img/wn/${it.current.forecastWeather[0].icon}@2x.png")
                 .into(binding.currentWeatherInclude.temperatureIdentifierImage)
@@ -121,7 +122,7 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
     }
 
     private fun updateLocation(location: String) {
-        binding.currentWeatherInclude.cityTv.text = location
+        binding.currentWeatherInclude.locationTv.text = location
     }
 
     private fun updatePrecipitation(precipitationVolume: String  = "-") {
@@ -130,6 +131,8 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
         binding.currentWeatherInclude.precipitationInclude.infoImage.setImageDrawable(
             ResourcesCompat.getDrawable(
                 resources, R.drawable.ic_precipitationandsun_icon, null))
+        binding.currentWeatherInclude.precipitationInclude.infoHeaderTv.text =
+            getString(R.string.precipitation)
         binding.currentWeatherInclude.precipitationInclude.infoTv.text =
             "$precipitationVolume $unitAbbreviation"
     }
@@ -139,24 +142,49 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
             chooseLocalizedUnitAbbreviation(getString(R.string.kph), getString(R.string.mph))
         binding.currentWeatherInclude.windInclude.infoImage.setImageDrawable(ResourcesCompat.getDrawable(
             resources, R.drawable.wind_icon, null))
+        binding.currentWeatherInclude.windInclude.infoHeaderTv.text =
+            getString(R.string.wind)
         binding.currentWeatherInclude.windInclude.infoTv.text =
             "$windSpeed $unitAbbreviation"
     }
 
     private fun updateVisibility(visibilityDistance: Double) {
         val unitAbbreviation =
-            chooseLocalizedUnitAbbreviation(getString(R.string.meter), getString(R.string.mile))
+            chooseLocalizedUnitAbbreviation(getString(R.string.km), getString(R.string.mile))
         binding.currentWeatherInclude.visibilityInclude.infoImage.setImageDrawable(ResourcesCompat.getDrawable(
             resources, R.drawable.ic_visibility_icon, null))
+        binding.currentWeatherInclude.visibilityInclude.infoHeaderTv.text =
+            getString(R.string.visibility)
         binding.currentWeatherInclude.visibilityInclude.infoTv.text =
-            "$visibilityDistance $unitAbbreviation"
+            "${visibilityDistance / 1000} $unitAbbreviation"
     }
 
     private fun updateHumidity(humidity: Double) {
         binding.currentWeatherInclude.humidityInclude.infoImage.setImageDrawable(ResourcesCompat.getDrawable(
             resources, R.drawable.ic_weather_humidity_icon, null))
+        binding.currentWeatherInclude.humidityInclude.infoHeaderTv.text =
+            getString(R.string.humidity)
         binding.currentWeatherInclude.humidityInclude.infoTv.text =
             "$humidity%"
+    }
+
+
+    private fun updateUvIndex(uvIndex: Double) {
+        binding.currentWeatherInclude.uvIndexInclude.infoImage.setImageDrawable(ResourcesCompat.getDrawable(
+            resources, R.drawable.ic_uv_index_icon, null))
+        binding.currentWeatherInclude.uvIndexInclude.infoHeaderTv.text =
+            getString(R.string.uv_index)
+        binding.currentWeatherInclude.uvIndexInclude.infoTv.text =
+            "$uvIndex"
+    }
+
+    private fun updatePressure(pressure: Double) {
+        binding.currentWeatherInclude.pressureInclude.infoImage.setImageDrawable(ResourcesCompat.getDrawable(
+            resources, R.drawable.ic_pressure_icon, null))
+        binding.currentWeatherInclude.pressureInclude.infoHeaderTv.text =
+            getString(R.string.pressure)
+        binding.currentWeatherInclude.pressureInclude.infoTv.text =
+            "$pressure"
     }
 
     private fun hourlyItemClicked(hourly: ForecastHourly) {

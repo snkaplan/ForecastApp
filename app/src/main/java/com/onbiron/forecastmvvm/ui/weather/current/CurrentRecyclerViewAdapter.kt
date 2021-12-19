@@ -40,7 +40,7 @@ class CurrentRecyclerViewAdapter(
             Glide.with(view)
                 .load("http://openweathermap.org/img/wn/${hourly.weather[0].icon}@2x.png")
                 .into(itemBinding.tempImg)
-            itemBinding.tempTv.text = hourly.temperature.toString()
+            itemBinding.tempTv.text = "${hourly.temperature.toString()}°"
             itemBinding.timeTv.text = SimpleDateFormat("MM-dd/HH:mm").format(Date(hourly.timestamp * 1000))
             // itemBinding.myTextView.text = hourly.name
             view.setOnClickListener {

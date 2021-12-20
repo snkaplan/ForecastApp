@@ -8,8 +8,8 @@ data class ForecastDaily(
     val pop: Double, //probability of precipitation
     val pressure: Double,
     val rain: Double, // Precipitation volume, mm
-    val sunrise: Double,
-    val sunset: Double,
+    val sunrise: Long,
+    val sunset: Long,
     val temperature: Temp,
     val uvIndex: Double,
     val weather: List<ForecastWeather>,

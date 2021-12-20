@@ -48,10 +48,6 @@ class ForecastFragment : ScopedFragment(), KodeinAware {
     private fun bindUI() = launch {
         binding.forecastGroupLoading.visibility = View.VISIBLE
         binding.forecastCl.visibility = View.GONE
-        val cal: Calendar = Calendar.getInstance()
-        val dayOfWeek = cal.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.US)
-        val dayOfMonth = cal[Calendar.DAY_OF_MONTH]
-        binding.forecastInclude.dateTv.text = "$dayOfWeek, $dayOfMonth"
         val forecastJob = async { viewModel.forecast.await() }
         val forecast = forecastJob.await()
         forecast.observe(viewLifecycleOwner, Observer{
@@ -59,6 +55,7 @@ class ForecastFragment : ScopedFragment(), KodeinAware {
                 Log.d(TAG, "No forecast data found.")
                 return@Observer
             }
+            updateDate()
             updateLocation(it.location.name)
             binding.forecastInclude.forecastRv.apply{
                 layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
@@ -72,18 +69,23 @@ class ForecastFragment : ScopedFragment(), KodeinAware {
 
     private fun dailyItemClicked(daily: ForecastDaily) {
         viewModel.setSelectedDaily(daily)
+        updateDate(Calendar.getInstance().apply { timeInMillis = daily.timestamp * 1000 })
         if(!detailFragment.isResumed){
             val fm: FragmentManager = childFragmentManager
             val ft: FragmentTransaction = fm.beginTransaction()
             ft.replace(R.id.detail_fragment_container, detailFragment)
             ft.commit()
-        } else {
-            Log.d(TAG, "dailyItemClicked: fragment already resumed")
         }
     }
 
     private fun updateLocation(location: String) {
         binding.forecastInclude.locationTv.text = location
+    }
+
+    private fun updateDate(cal: Calendar = Calendar.getInstance()){
+        val dayOfWeek = cal.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.US)
+        val dayOfMonth = cal[Calendar.DAY_OF_MONTH]
+        binding.forecastInclude.dateTv.text = "$dayOfWeek, $dayOfMonth"
     }
 
 }

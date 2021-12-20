@@ -12,6 +12,8 @@ import com.onbiron.forecastmvvm.ui.base.ScopedFragment
 import com.onbiron.forecastmvvm.ui.weather.forecast.list.ForecastViewModel
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.closestKodein
+import java.text.SimpleDateFormat
+import java.util.*
 
 class ForecastDetailFragment : ScopedFragment(), KodeinAware {
     override val kodein by closestKodein()
@@ -33,7 +35,13 @@ class ForecastDetailFragment : ScopedFragment(), KodeinAware {
                 Log.d(TAG, "No forecast detail found.")
                 return@Observer
             }
-            Log.d(TAG, "Selected Daily Changed")
+            val sdf = SimpleDateFormat("HH:mm")
+            binding.sunriseInfoTv.text = sdf.format(Date(it.sunrise * 1000))
+            binding.sunsetInfoTv.text = sdf.format(Date(it.sunset * 1000))
+            binding.precipitationInfoTv.text = it.pop.toString()
+            binding.humidityInfoTv.text = it.humidity.toString()
+            binding.windInfoTv.text = it.windSpeed.toString()
+            binding.pressureInfoTv.text = it.pressure.toString()
         })
     }
 }

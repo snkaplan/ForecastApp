@@ -58,6 +58,20 @@
                 app:layout_constraintVertical_bias="0.1"
                 tools:text="Tuesday, 15" />
 
+            <ImageButton
+                android:id="@+id/refresh_btn"
+                android:layout_width="@dimen/b1_image_size"
+                android:layout_height="@dimen/b1_image_size"
+                android:contentDescription="@string/image_description"
+                android:src="@drawable/ic_baseline_refresh_24"
+                android:background="@android:color/transparent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1"
+                app:layout_constraintStart_toEndOf="@+id/date_tv"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0" />
+
             <TextView
                 android:id="@+id/location_tv"
                 android:layout_width="wrap_content"

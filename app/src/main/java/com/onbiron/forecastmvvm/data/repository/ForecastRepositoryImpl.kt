@@ -47,6 +47,15 @@ class ForecastRepositoryImpl(
         }
     }
 
+    override suspend fun refreshForecast(isMetric: Boolean) {
+        withContext(Dispatchers.IO) {
+            val fetchedForecast = fetchForecast(isMetric)
+            if (fetchedForecast != null) {
+                persistForecastData(fetchedForecast)
+            }
+        }
+    }
+
     private fun persistFetchedCurrentWeather(fetchedWeather: CurrentWeatherResponse) {
         currentWeatherDao.upsert(
             CurrentWeatherEntry(fetchedWeather.main.feelsLike,
@@ -149,12 +158,15 @@ class ForecastRepositoryImpl(
     private suspend fun initForecast(isMetric: Boolean): ForecastResponse? {
         var forecastResponse: ForecastResponse? = null
         if (isForecastFetchNeeded()) {
-            val unit = if (isMetric) "metric" else "imperial"
-            forecastResponse =
-                weatherNetworkDataSource.fetchForecast(locationProvider.getPreferredLocationString(),
-                    unit)
+            forecastResponse = fetchForecast(isMetric)
         }
         return forecastResponse
+    }
+
+    private suspend fun fetchForecast(isMetric: Boolean): ForecastResponse?{
+        val unit = if (isMetric) "metric" else "imperial"
+        return weatherNetworkDataSource.fetchForecast(locationProvider.getPreferredLocationString(),
+                unit)
     }
 
 

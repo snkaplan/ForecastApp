@@ -3,6 +3,7 @@ package com.onbiron.forecastmvvm.ui.weather.current
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.text.format.DateUtils
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -58,6 +59,7 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
         val forecastJob = async { viewModel.forecast.await() }
         val forecast = forecastJob.await()
         forecast.observe(viewLifecycleOwner, {
+            Log.d(TAG, "Observer callback")
             var initialPos = 0
             updateLocation(it.location.name)
             var currentDay: ForecastDaily? = null
@@ -93,6 +95,9 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
                 ) { selectedHourly: ForecastHourly -> hourlyItemClicked(selectedHourly) }
                 scrollToPosition(initialPos)
                 updatePrecipitation(currentDay?.pop.toString())
+            }
+            binding.currentWeatherInclude.refreshBtn.setOnClickListener {
+                viewModel.refreshForecast()
             }
             binding.groupLoading.visibility = View.GONE
             binding.currentWeatherCl.visibility = View.VISIBLE

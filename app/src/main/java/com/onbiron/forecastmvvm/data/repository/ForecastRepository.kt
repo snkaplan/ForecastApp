@@ -7,4 +7,5 @@ import com.onbiron.forecastmvvm.data.db.entity.forecast.Forecast
 interface ForecastRepository {
     suspend fun getCurrentWeather(isMetric: Boolean): LiveData<CurrentWeatherEntry>
     suspend fun getForecast(isMetric: Boolean): LiveData<Forecast>
+    suspend fun refreshForecast(isMetric: Boolean)
 }

@@ -5,6 +5,9 @@ import com.onbiron.forecastmvvm.data.provider.UnitProvider
 import com.onbiron.forecastmvvm.data.repository.ForecastRepository
 import com.onbiron.forecastmvvm.internal.UnitSystem
 import com.onbiron.forecastmvvm.internal.lazyDeferred
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class CurrentWeatherViewModel(
     private val forecastRepository: ForecastRepository,
@@ -16,5 +19,11 @@ class CurrentWeatherViewModel(
 
     val forecast by lazyDeferred {
         forecastRepository.getForecast(isMetric)
+    }
+
+    fun refreshForecast(){
+        CoroutineScope(Dispatchers.Main).launch{
+            forecastRepository.refreshForecast(isMetric)
+        }
     }
 }

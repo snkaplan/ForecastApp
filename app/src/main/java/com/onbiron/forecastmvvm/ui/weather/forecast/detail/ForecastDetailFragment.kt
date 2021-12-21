@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import com.onbiron.forecastmvvm.R
 import com.onbiron.forecastmvvm.databinding.ForecastDetailFragmentBinding
 import com.onbiron.forecastmvvm.ui.base.ScopedFragment
 import com.onbiron.forecastmvvm.ui.weather.forecast.list.ForecastViewModel
@@ -38,10 +39,10 @@ class ForecastDetailFragment : ScopedFragment(), KodeinAware {
             val sdf = SimpleDateFormat("HH:mm")
             binding.sunriseInfoTv.text = sdf.format(Date(it.sunrise * 1000))
             binding.sunsetInfoTv.text = sdf.format(Date(it.sunset * 1000))
-            binding.precipitationInfoTv.text = it.pop.toString()
-            binding.humidityInfoTv.text = it.humidity.toString()
-            binding.windInfoTv.text = it.windSpeed.toString()
-            binding.pressureInfoTv.text = it.pressure.toString()
+            binding.precipitationInfoTv.text = "${it.pop} ${getString(R.string.milimeter)}"
+            binding.humidityInfoTv.text = "${it.humidity}%"
+            binding.windInfoTv.text = "${it.windSpeed} ${getString(R.string.metric_wind_speed)}"
+            binding.pressureInfoTv.text = "${it.pressure} ${getString(R.string.pressure_unit)}"
         })
     }
 }

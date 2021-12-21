@@ -14,8 +14,6 @@ import com.onbiron.forecastmvvm.data.network.WeatherNetworkDataSource
 import com.onbiron.forecastmvvm.data.network.WeatherNetworkDataSourceImpl
 import com.onbiron.forecastmvvm.data.provider.LocationProvider
 import com.onbiron.forecastmvvm.data.provider.LocationProviderImpl
-import com.onbiron.forecastmvvm.data.provider.UnitProvider
-import com.onbiron.forecastmvvm.data.provider.UnitProviderImpl
 import com.onbiron.forecastmvvm.data.repository.ForecastRepository
 import com.onbiron.forecastmvvm.data.repository.ForecastRepositoryImpl
 import com.onbiron.forecastmvvm.ui.weather.current.CurrentWeatherViewModelFactory
@@ -38,16 +36,18 @@ class ForecastApplication : Application(), KodeinAware {
         bind() from singleton { WeatherApiService(instance(), getApiKey(), getApiStr()) }
         bind() from provider { LocationServices.getFusedLocationProviderClient(instance<Context>()) }
         bind<LocationProvider>() with singleton { LocationProviderImpl(instance(), instance()) }
-        bind<WeatherNetworkDataSource>() with singleton { WeatherNetworkDataSourceImpl(instance(), instance()) }
-        bind<UnitProvider>() with singleton { UnitProviderImpl(instance()) }
+        bind<WeatherNetworkDataSource>() with singleton {
+            WeatherNetworkDataSourceImpl(instance(),
+                instance())
+        }
         bind<ForecastRepository>() with singleton {
             ForecastRepositoryImpl(instance(),
                 instance(),
                 instance(),
                 instance())
         }
-        bind() from provider { CurrentWeatherViewModelFactory(instance(), instance()) }
-        bind() from provider { ForecastViewModelProvider(instance(), instance()) }
+        bind() from provider { CurrentWeatherViewModelFactory(instance()) }
+        bind() from provider { ForecastViewModelProvider(instance()) }
 
     }
 

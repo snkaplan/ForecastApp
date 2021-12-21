@@ -23,13 +23,12 @@ class ForecastRepositoryImpl(
     private val currentWeatherDao: CurrentWeatherDao,
     private val forecastDao: ForecastDao,
     private val weatherNetworkDataSource: WeatherNetworkDataSource,
-    private val locationProvider: LocationProvider,
+    private val locationProvider: LocationProvider
 ) : ForecastRepository {
     private val TAG = this::class.java.simpleName
-
-    override suspend fun getCurrentWeather(isMetric: Boolean): LiveData<CurrentWeatherEntry> {
+    override suspend fun getCurrentWeather(): LiveData<CurrentWeatherEntry> {
         return withContext(Dispatchers.IO) {
-            val weatherData = initCurrentWeatherData(isMetric)
+            val weatherData = initCurrentWeatherData()
             if (weatherData != null) {
                 persistFetchedCurrentWeather(weatherData)
             }
@@ -37,9 +36,9 @@ class ForecastRepositoryImpl(
         }
     }
 
-    override suspend fun getForecast(isMetric: Boolean): LiveData<Forecast> {
+    override suspend fun getForecast(): LiveData<Forecast> {
         return withContext(Dispatchers.IO) {
-            val weatherData = initForecast(isMetric)
+            val weatherData = initForecast()
             if (weatherData != null) {
                 persistForecastData(weatherData)
             }
@@ -47,9 +46,9 @@ class ForecastRepositoryImpl(
         }
     }
 
-    override suspend fun refreshForecast(isMetric: Boolean) {
+    override suspend fun refreshForecast() {
         withContext(Dispatchers.IO) {
-            val fetchedForecast = fetchForecast(isMetric)
+            val fetchedForecast = fetchForecast()
             if (fetchedForecast != null) {
                 persistForecastData(fetchedForecast)
             }
@@ -144,29 +143,25 @@ class ForecastRepositoryImpl(
                     System.currentTimeMillis())))
     }
 
-    private suspend fun initCurrentWeatherData(isMetric: Boolean): CurrentWeatherResponse? {
+    private suspend fun initCurrentWeatherData(): CurrentWeatherResponse? {
         var currentWeatherResponse: CurrentWeatherResponse? = null
         if (isCurrentFetchNeeded()) {
-            val unit = if (isMetric) "metric" else "imperial"
             currentWeatherResponse =
-                weatherNetworkDataSource.fetchCurrentWeather(locationProvider.getPreferredLocationString(),
-                    unit)
+                weatherNetworkDataSource.fetchCurrentWeather(locationProvider.getPreferredLocationString())
         }
         return currentWeatherResponse
     }
 
-    private suspend fun initForecast(isMetric: Boolean): ForecastResponse? {
+    private suspend fun initForecast(): ForecastResponse? {
         var forecastResponse: ForecastResponse? = null
         if (isForecastFetchNeeded()) {
-            forecastResponse = fetchForecast(isMetric)
+            forecastResponse = fetchForecast()
         }
         return forecastResponse
     }
 
-    private suspend fun fetchForecast(isMetric: Boolean): ForecastResponse?{
-        val unit = if (isMetric) "metric" else "imperial"
-        return weatherNetworkDataSource.fetchForecast(locationProvider.getPreferredLocationString(),
-                unit)
+    private suspend fun fetchForecast(): ForecastResponse?{
+        return weatherNetworkDataSource.fetchForecast(locationProvider.getPreferredLocationString())
     }
 
 

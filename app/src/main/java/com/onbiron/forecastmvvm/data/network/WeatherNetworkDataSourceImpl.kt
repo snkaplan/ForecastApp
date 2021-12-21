@@ -12,10 +12,9 @@ class WeatherNetworkDataSourceImpl(
     private val weatherApiService: WeatherApiService,
     private val locationProvider: LocationProvider
 ): WeatherNetworkDataSource {
-
+    private val unit = "metric"
     override suspend fun fetchCurrentWeather(
-        location: CustomLocation,
-        unit: String,
+        location: CustomLocation
     ): CurrentWeatherResponse? {
         try {
             return if (location.name.isNullOrEmpty()) {
@@ -33,7 +32,7 @@ class WeatherNetworkDataSourceImpl(
         return null
     }
 
-    override suspend fun fetchForecast(location: CustomLocation, unit: String): ForecastResponse? {
+    override suspend fun fetchForecast(location: CustomLocation): ForecastResponse? {
         try {
             if (location.name.isNullOrEmpty()) {
                  return weatherApiService

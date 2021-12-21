@@ -5,6 +5,6 @@ import com.onbiron.forecastmvvm.data.network.response.forecast.ForecastResponse
 import com.onbiron.forecastmvvm.data.provider.CustomLocation
 
 interface WeatherNetworkDataSource {
-    suspend fun fetchCurrentWeather(location: CustomLocation, unit: String): CurrentWeatherResponse?
-    suspend fun fetchForecast(location: CustomLocation, unit: String): ForecastResponse?
+    suspend fun fetchCurrentWeather(location: CustomLocation): CurrentWeatherResponse?
+    suspend fun fetchForecast(location: CustomLocation): ForecastResponse?
 }

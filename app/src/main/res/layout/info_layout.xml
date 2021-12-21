@@ -9,24 +9,18 @@
             android:minHeight="75dp"
             android:background="@drawable/info_layout_gradient_bg"
             android:layout_gravity="center">
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/title_guideline"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                app:layout_constraintGuide_percent="0.5" />
+
             <TextView
                 android:id="@+id/info_header_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/colorWhite"
                 android:fontFamily="@font/roboto_mono_thin"
+                android:textColor="@color/colorWhite"
                 android:textSize="@dimen/s1_text_size"
+                app:layout_constraintBottom_toTopOf="@+id/info_image"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="@+id/title_guideline"
-                app:layout_constraintVertical_bias="0.3"
                 tools:text="Label" />
 
             <ImageView
@@ -34,22 +28,21 @@
                 android:layout_width="@dimen/s1_image_size"
                 android:layout_height="@dimen/s1_image_size"
                 android:contentDescription="@string/image_description"
+                app:layout_constraintBottom_toBottomOf="@+id/info_tv"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/title_guideline"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintHorizontal_bias="0.1"/>
+                app:layout_constraintTop_toBottomOf="@+id/info_header_tv" />
 
             <TextView
                 android:id="@+id/info_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/colorWhite"
                 android:fontFamily="@font/roboto_mono_medium"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/info_image"
-                app:layout_constraintTop_toBottomOf="@+id/title_guideline"
+                android:textColor="@color/colorWhite"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/info_image"
                 tools:text="Label" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

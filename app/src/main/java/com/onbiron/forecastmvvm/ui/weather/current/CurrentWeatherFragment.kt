@@ -59,12 +59,11 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
         val forecastJob = async { viewModel.forecast.await() }
         val forecast = forecastJob.await()
         forecast.observe(viewLifecycleOwner, {
-            Log.d(TAG, "Observer callback")
             var initialPos = 0
             updateLocation(it.location.name)
             var currentDay: ForecastDaily? = null
-            for(item in it.daily){
-                if(DateUtils.isToday(item.timestamp * 1000)){
+            for (item in it.daily) {
+                if (DateUtils.isToday(item.timestamp * 1000)) {
                     currentDay = item
                     break
                 }
@@ -81,18 +80,18 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
             Glide.with(this@CurrentWeatherFragment)
                 .load("http://openweathermap.org/img/wn/${it.current.forecastWeather[0].icon}@2x.png")
                 .into(binding.currentWeatherInclude.temperatureIdentifierImage)
-            for(idx in it.hourly.indices){
+            for (idx in it.hourly.indices) {
                 val dt = Instant.ofEpochSecond(it.hourly[idx].timestamp)
-                if(Instant.now().isBefore(dt)){
+                if (Instant.now().isBefore(dt)) {
                     initialPos = idx + 1
                     break
                 }
             }
-            binding.currentWeatherInclude.timelineRv.apply{
+            binding.currentWeatherInclude.timelineRv.apply {
                 layoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
                 setItemViewCacheSize(48)
                 adapter = CurrentRecyclerViewAdapter(it.hourly
-                ) { selectedHourly: ForecastHourly -> hourlyItemClicked(selectedHourly) }
+                ) { run {} }
                 scrollToPosition(initialPos)
                 updatePrecipitation(currentDay?.pop.toString())
             }
@@ -105,19 +104,13 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
 
     }
 
-    private fun chooseLocalizedUnitAbbreviation(metric: String, imperial: String): String {
-        return if (viewModel.isMetric) metric else imperial
-
-    }
-
     private fun updateTemperatures(
         temperature: Double,
         min: String,
         max: String,
         condition: String,
     ) {
-        val unitAbbreviation = chooseLocalizedUnitAbbreviation(getString(R.string.celcius),
-            getString(R.string.fahrenheit))
+        val unitAbbreviation = getString(R.string.celcius)
         binding.currentWeatherInclude.let {
             it.temperatureTv.text = "$temperature°$unitAbbreviation"
             it.minMaxTempTv.text = "$min° / $max°"
@@ -130,9 +123,8 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
         binding.currentWeatherInclude.locationTv.text = location
     }
 
-    private fun updatePrecipitation(precipitationVolume: String  = "-") {
-        val unitAbbreviation =
-            chooseLocalizedUnitAbbreviation(getString(R.string.milimeter), getString(R.string.inch))
+    private fun updatePrecipitation(precipitationVolume: String = "-") {
+        val unitAbbreviation = getString(R.string.milimeter)
         binding.currentWeatherInclude.precipitationInclude.infoImage.setImageDrawable(
             ResourcesCompat.getDrawable(
                 resources, R.drawable.ic_precipitationandsun_icon, null))
@@ -143,8 +135,7 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
     }
 
     private fun updateWind(windSpeed: Double) {
-        val unitAbbreviation =
-            chooseLocalizedUnitAbbreviation(getString(R.string.kph), getString(R.string.mph))
+        val unitAbbreviation = getString(R.string.metric_wind_speed)
         binding.currentWeatherInclude.windInclude.infoImage.setImageDrawable(ResourcesCompat.getDrawable(
             resources, R.drawable.wind_icon, null))
         binding.currentWeatherInclude.windInclude.infoHeaderTv.text =
@@ -154,14 +145,14 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
     }
 
     private fun updateVisibility(visibilityDistance: Double) {
-        val unitAbbreviation =
-            chooseLocalizedUnitAbbreviation(getString(R.string.km), getString(R.string.mile))
+        val unitAbbreviation = getString(R.string.km)
         binding.currentWeatherInclude.visibilityInclude.infoImage.setImageDrawable(ResourcesCompat.getDrawable(
             resources, R.drawable.ic_visibility_icon, null))
         binding.currentWeatherInclude.visibilityInclude.infoHeaderTv.text =
             getString(R.string.visibility)
         binding.currentWeatherInclude.visibilityInclude.infoTv.text =
-            "${visibilityDistance / 1000} $unitAbbreviation"
+            "${visibilityDistance / 1000}  $unitAbbreviation"
+
     }
 
     private fun updateHumidity(humidity: Double) {
@@ -189,10 +180,7 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
         binding.currentWeatherInclude.pressureInclude.infoHeaderTv.text =
             getString(R.string.pressure)
         binding.currentWeatherInclude.pressureInclude.infoTv.text =
-            "$pressure"
+            "$pressure ${getString(R.string.pressure_unit)}"
     }
 
-    private fun hourlyItemClicked(hourly: ForecastHourly) {
-        Toast.makeText(activity, "Hourly Info: $hourly", Toast.LENGTH_LONG).show()
-    }
 }

@@ -4,21 +4,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.onbiron.forecastmvvm.data.db.entity.forecast.ForecastDaily
-import com.onbiron.forecastmvvm.data.provider.UnitProvider
 import com.onbiron.forecastmvvm.data.repository.ForecastRepository
-import com.onbiron.forecastmvvm.internal.UnitSystem
 import com.onbiron.forecastmvvm.internal.lazyDeferred
 
 class ForecastViewModel(
-    private val forecastRepository: ForecastRepository,
-    unitProvider: UnitProvider,
+    private val forecastRepository: ForecastRepository
 ) : ViewModel() {
-    private val unitSystem: UnitSystem = unitProvider.getUnitSystem()
-    private val isMetric: Boolean
-        get() = unitSystem == UnitSystem.METRIC
 
     val forecast by lazyDeferred {
-        forecastRepository.getForecast(isMetric)
+        forecastRepository.getForecast()
     }
 
     private val _selectedDaily = MutableLiveData<ForecastDaily>()

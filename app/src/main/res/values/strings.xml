@@ -10,17 +10,15 @@
     <string name="visibility">Visibility</string>
     <string name="meter">Meter</string>
     <string name="km">km</string>
-    <string name="mile">Mile</string>
-    <string name="kph">kph</string>
-    <string name="mph">mph</string>
     <string name="celcius">C</string>
-    <string name="fahrenheit">Fahrenheit</string>
     <string name="milimeter">mm</string>
-    <string name="inch">in</string>
     <string name="humidity">Humidity</string>
     <string name="weather_today">Weather Today</string>
     <string name="more_details">More Details</string>
     <string name="uv_index">UV</string>
     <string name="pressure">Pressure</string>
     <string name="image_description">Image</string>
+    <string name="pressure_unit">hPa</string>
+    <string name="metric_wind_speed">m/s</string>
+
 </resources>

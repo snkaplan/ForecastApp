@@ -18,15 +18,4 @@
          </EditTextPreference>
      </PreferenceCategory>
 
-    <PreferenceCategory
-        android:title="Units">
-        <ListPreference android:key="UNIT_SYSTEM"
-            android:title="Unit System"
-            android:summary="%s"
-            android:defaultValue="METRIC"
-            android:entries="@array/unitSystemEntries"
-            android:entryValues="@array/unitSystemValues">
-        </ListPreference>
-    </PreferenceCategory>
-
 </PreferenceScreen>

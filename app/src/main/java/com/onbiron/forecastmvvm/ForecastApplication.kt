@@ -44,6 +44,7 @@ class ForecastApplication : Application(), KodeinAware {
             ForecastRepositoryImpl(instance(),
                 instance(),
                 instance(),
+                instance(),
                 instance())
         }
         bind() from provider { CurrentWeatherViewModelFactory(instance()) }

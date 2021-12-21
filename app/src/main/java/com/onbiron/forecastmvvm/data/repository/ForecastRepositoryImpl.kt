@@ -1,7 +1,11 @@
 package com.onbiron.forecastmvvm.data.repository
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.LiveData
+import com.onbiron.forecastmvvm.R
 import com.onbiron.forecastmvvm.data.db.dao.current.CurrentWeatherDao
 import com.onbiron.forecastmvvm.data.db.dao.forecast.ForecastDao
 import com.onbiron.forecastmvvm.data.db.entity.current.CurrentWeatherEntry
@@ -9,9 +13,11 @@ import com.onbiron.forecastmvvm.data.db.entity.WeatherLocation
 import com.onbiron.forecastmvvm.data.db.entity.forecast.*
 import com.onbiron.forecastmvvm.data.network.WeatherNetworkDataSource
 import com.onbiron.forecastmvvm.data.network.response.current.CurrentWeatherResponse
+import com.onbiron.forecastmvvm.data.network.response.current.Sys
 import com.onbiron.forecastmvvm.data.network.response.forecast.ForecastResponse
 import com.onbiron.forecastmvvm.data.network.response.forecast.Weather
 import com.onbiron.forecastmvvm.data.provider.LocationProvider
+import com.onbiron.forecastmvvm.data.provider.PreferenceProvider
 import kotlinx.coroutines.*
 import java.time.Instant
 import java.time.ZoneOffset
@@ -23,7 +29,8 @@ class ForecastRepositoryImpl(
     private val currentWeatherDao: CurrentWeatherDao,
     private val forecastDao: ForecastDao,
     private val weatherNetworkDataSource: WeatherNetworkDataSource,
-    private val locationProvider: LocationProvider
+    private val locationProvider: LocationProvider,
+    private val context: Context,
 ) : ForecastRepository {
     private val TAG = this::class.java.simpleName
     override suspend fun getCurrentWeather(): LiveData<CurrentWeatherEntry> {
@@ -48,9 +55,20 @@ class ForecastRepositoryImpl(
 
     override suspend fun refreshForecast() {
         withContext(Dispatchers.IO) {
-            val fetchedForecast = fetchForecast()
-            if (fetchedForecast != null) {
-                persistForecastData(fetchedForecast)
+            val nextFetchTime = forecastDao.getForecastAsNormal()?.location?.lastTimeEpoch!! + 3600000
+            val now = System.currentTimeMillis()
+            if (nextFetchTime <= now) {
+                val fetchedForecast = fetchForecast()
+                if (fetchedForecast != null) {
+                    persistForecastData(fetchedForecast)
+                } else {}
+            } else {
+                val leftTime = (nextFetchTime - now) / 60000
+                withContext(Dispatchers.Main){
+                    Toast.makeText(context,
+                        "${context.getString(R.string.refresh_error_message)} $leftTime minute",
+                        Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
@@ -160,7 +178,7 @@ class ForecastRepositoryImpl(
         return forecastResponse
     }
 
-    private suspend fun fetchForecast(): ForecastResponse?{
+    private suspend fun fetchForecast(): ForecastResponse? {
         return weatherNetworkDataSource.fetchForecast(locationProvider.getPreferredLocationString())
     }
 

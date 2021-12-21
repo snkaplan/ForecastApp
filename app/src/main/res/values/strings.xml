@@ -20,5 +20,6 @@
     <string name="image_description">Image</string>
     <string name="pressure_unit">hPa</string>
     <string name="metric_wind_speed">m/s</string>
+    <string name="refresh_error_message">You can refresh every 1 hour please wait for</string>
 
 </resources>

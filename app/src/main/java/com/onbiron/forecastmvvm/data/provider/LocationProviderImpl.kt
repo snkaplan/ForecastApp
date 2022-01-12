@@ -4,8 +4,8 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
+import android.location.Address
 import android.location.Location
-import android.util.Log
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.onbiron.forecastmvvm.data.db.entity.WeatherLocation
@@ -13,34 +13,43 @@ import com.onbiron.forecastmvvm.internal.LocationPermissionNotGrantedException
 import com.onbiron.forecastmvvm.internal.asDeferred
 import kotlinx.coroutines.Deferred
 
+import android.location.Geocoder
+import java.io.IOException
+import java.util.*
+import kotlin.math.abs
+
+
 const val USE_DEVICE_LOCATION = "USE_DEVICE_LOCATION"
 const val CUSTOM_LOCATION = "CUSTOM_LOCATION"
 const val DEFAULT_LOCATION = "London"
 
 class LocationProviderImpl(
-            context: Context,
-            private val fusedLocationProviderClient: FusedLocationProviderClient
-        ) : PreferenceProvider(context), LocationProvider {
+    private val context: Context,
+    private val fusedLocationProviderClient: FusedLocationProviderClient,
+) : PreferenceProvider(context), LocationProvider {
     override suspend fun hasLocationChanged(lastWeatherLocation: WeatherLocation): Boolean {
-        val deviceLocationChanged =  try {
+        val deviceLocationChanged = try {
             hasDeviceLocationChanged(lastWeatherLocation)
-        } catch (e: LocationPermissionNotGrantedException){
+        } catch (e: LocationPermissionNotGrantedException) {
             return false
         }
         return deviceLocationChanged || hasCustomLocationChanged(lastWeatherLocation)
     }
 
-    override suspend fun getPreferredLocationString(): String {
-        if(isUsingDeviceLocation()) {
-            try{
+    override suspend fun getPreferredLocationString(): CustomLocation {
+        if (isUsingDeviceLocation()) {
+            try {
                 val deviceLocation =
-                    getLastDeviceLocation().await() ?: return getCustomLocationName() ?: DEFAULT_LOCATION
-                return "${deviceLocation.latitude}, ${deviceLocation.longitude}"
-            } catch (e: LocationPermissionNotGrantedException){
-                return getCustomLocationName() ?: DEFAULT_LOCATION
+                    getLastDeviceLocation().await()
+                        ?: return CustomLocation(getCustomLocationName() ?: DEFAULT_LOCATION,
+                            null,
+                            null)
+                return CustomLocation(null, deviceLocation.latitude, deviceLocation.longitude)
+            } catch (e: LocationPermissionNotGrantedException) {
+                return CustomLocation(getCustomLocationName() ?: DEFAULT_LOCATION, null, null)
             }
         } else {
-            return getCustomLocationName() ?: DEFAULT_LOCATION
+            return CustomLocation(getCustomLocationName() ?: DEFAULT_LOCATION, null, null)
         }
     }
 
@@ -53,8 +62,8 @@ class LocationProviderImpl(
 
         // Comparing doubles cannot be done with "=="
         val comparisonThreshold = 0.03
-        return Math.abs(deviceLocation.latitude - lastWeatherLocation.lat) > comparisonThreshold &&
-                Math.abs(deviceLocation.longitude - lastWeatherLocation.lon) > comparisonThreshold
+        return abs(deviceLocation.latitude - lastWeatherLocation.lat) > comparisonThreshold &&
+                abs(deviceLocation.longitude - lastWeatherLocation.lon) > comparisonThreshold
     }
 
     private fun hasCustomLocationChanged(lastWeatherLocation: WeatherLocation): Boolean {
@@ -85,4 +94,29 @@ class LocationProviderImpl(
         return ContextCompat.checkSelfPermission(appContext,
             Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
     }
+
+
+    override fun getAddressFromLatLon(lat: Double, lng: Double) : Address?{
+        val geocoder = Geocoder(context, Locale.getDefault())
+        try {
+            val addresses: List<Address> = geocoder.getFromLocation(lat, lng, 1)
+            return addresses[0]
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        return null
+    }
+
+    override fun getAddressFromName(name: String): Address? {
+        val geocoder = Geocoder(context, Locale.getDefault())
+        try {
+            val addresses: List<Address> = geocoder.getFromLocationName(name, 1)
+            return addresses[0]
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        return null
+    }
+
+
 }

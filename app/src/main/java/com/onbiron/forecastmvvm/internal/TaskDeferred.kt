@@ -9,7 +9,7 @@ fun <T> Task<T>.asDeferred(): Deferred<T> {
     this.addOnSuccessListener { result ->
         deferred.complete(result)
     }
-    this.addOnFailureListener() { exception ->
+    this.addOnFailureListener { exception ->
         deferred.completeExceptionally(exception)
     }
     return deferred

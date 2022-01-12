@@ -1,11 +1,9 @@
 package com.onbiron.forecastmvvm.ui
 
 import android.annotation.SuppressLint
+import android.os.Looper
 import android.util.Log
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.*
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -14,8 +12,8 @@ import com.google.android.gms.location.LocationRequest
 class LifecycleBoundLocationManager(
     lifecycleOwner: LifecycleOwner,
     private val fusedLocationProviderClient: FusedLocationProviderClient,
-    private val locationCallback: LocationCallback
-) : LifecycleObserver {
+    private val locationCallback: LocationCallback,
+) : LifecycleEventObserver {
 
     init {
         lifecycleOwner.lifecycle.addObserver(this)
@@ -27,14 +25,20 @@ class LifecycleBoundLocationManager(
         priority = LocationRequest.PRIORITY_HIGH_ACCURACY
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     @SuppressLint("MissingPermission")
-    fun startLocationUpdates() {
-        fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, null)
-    }
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-    fun removeLocationUpdates() {
-        fusedLocationProviderClient.removeLocationUpdates(locationCallback)
+    override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+        when (event) {
+            Lifecycle.Event.ON_CREATE -> {}
+            Lifecycle.Event.ON_START -> {}
+            Lifecycle.Event.ON_RESUME -> fusedLocationProviderClient.requestLocationUpdates(
+                locationRequest,
+                locationCallback,
+                Looper.getMainLooper())
+            Lifecycle.Event.ON_PAUSE -> fusedLocationProviderClient.removeLocationUpdates(
+                locationCallback)
+            Lifecycle.Event.ON_STOP -> {}
+            Lifecycle.Event.ON_DESTROY -> {}
+            Lifecycle.Event.ON_ANY -> {}
+        }
     }
 }

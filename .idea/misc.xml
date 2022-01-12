@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="../../../../../../../../layout/custom_preview.xml" value="0.29791666666666666" />
+        <entry key="app/src/main/res/drawable/bottomlayout.xml" value="0.20364583333333333" />
+        <entry key="app/src/main/res/drawable/ic_precipitationandsun_icon.xml" value="0.32916666666666666" />
+        <entry key="app/src/main/res/drawable/ic_pressure_icon.xml" value="0.20885416666666667" />
+        <entry key="app/src/main/res/drawable/ic_today.xml" value="0.32916666666666666" />
+        <entry key="app/src/main/res/drawable/ic_uv_index_icon.xml" value="0.20885416666666667" />
+        <entry key="app/src/main/res/drawable/ic_visibility_icon.xml" value="0.32916666666666666" />
+        <entry key="app/src/main/res/drawable/ic_weather_humidity_icon.xml" value="0.32916666666666666" />
+        <entry key="app/src/main/res/drawable/ic_weather_sunny.xml" value="0.32916666666666666" />
+        <entry key="app/src/main/res/drawable/info_layout_gradient_bg.xml" value="0.371875" />
+        <entry key="app/src/main/res/drawable/main_bg.xml" value="0.371875" />
+        <entry key="app/src/main/res/drawable/wind_icon.xml" value="0.32916666666666666" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.19791666666666666" />
+        <entry key="app/src/main/res/layout/current_weather_fragment.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/current_weather_layout.xml" value="0.22" />
+        <entry key="app/src/main/res/layout/current_weather_layout_2.xml" value="0.2828125" />
+        <entry key="app/src/main/res/layout/forecast_detail_fragment.xml" value="0.22" />
+        <entry key="app/src/main/res/layout/forecast_fragment.xml" value="0.19791666666666666" />
+        <entry key="app/src/main/res/layout/forecast_layout.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/forecast_recycler_view_item.xml" value="0.35572916666666665" />
+        <entry key="app/src/main/res/layout/future_detail_weather_fragment.xml" value="0.19791666666666666" />
+        <entry key="app/src/main/res/layout/future_list_weather_fragment.xml" value="0.1875" />
+        <entry key="app/src/main/res/layout/future_weather_item.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/info_layout.xml" value="0.5" />
+        <entry key="app/src/main/res/layout/layout_weather.xml" value="0.2828125" />
+        <entry key="app/src/main/res/layout/timeline_temperature_item.xml" value="0.75" />
+        <entry key="app/src/main/res/layout/timeline_temperature_layout.xml" value="0.2828125" />
+        <entry key="app/src/main/res/menu/bottom_nav.xml" value="0.19791666666666666" />
+        <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.20885416666666667" />
+        <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.20885416666666667" />
+        <entry key="app/src/main/res/mipmap-anydpi-v26/weather_launcher.xml" value="0.20885416666666667" />
+        <entry key="app/src/main/res/mipmap-anydpi-v26/weather_launcher_round.xml" value="0.20885416666666667" />
+        <entry key="app/src/main/res/xml/preferences.xml" value="0.1875" />
+      </map>
+    </option>
+  </component>
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK" />
+</project>

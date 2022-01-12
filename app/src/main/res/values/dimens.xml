@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="s1_text_size">12sp</dimen>
+    <dimen name="s2_text_size">15sp</dimen>
+    <dimen name="m1_text_size">20sp</dimen>
+    <dimen name="m2_text_size">25sp</dimen>
+    <dimen name="b1_text_size">45sp</dimen>
+    <dimen name="b1_image_size">60dp</dimen>
+    <dimen name="m1_image_size">40dp</dimen>
+    <dimen name="s1_image_size">24dp</dimen>
+    <dimen name="padding_medium">10dp</dimen>
+</resources>
